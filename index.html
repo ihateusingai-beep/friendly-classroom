@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head><script>(function(){
+  function makeStore(){
+    var data = {};
+    var api = {
+      getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+      setItem: function(k, v){ data[k] = String(v); },
+      removeItem: function(k){ delete data[k]; },
+      clear: function(){ data = {}; },
+      key: function(i){ return Object.keys(data)[i] || null; }
+    };
+    Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+    return api;
+  }
+  function tryShim(name){
+    var works = false;
+    try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+    catch (_) { works = false; }
+    if (works) return;
+    try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+    catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+  }
+  tryShim('localStorage');
+  tryShim('sessionStorage');
+})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>友愛教室 - 像素大冒險</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+HK:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #2d1b0e;
+      --bg-mid: #4a3728;
+      --bg-light: #6b4f3a;
+      --cream: #f5d89a;
+      --cream-dark: #d4a855;
+      --orange: #e87830;
+      --orange-dark: #b85a20;
+      --yellow: #ffd93f;
+      --red: #e83838;
+      --green: #4caf50;
+      --white: #fff8e0;
+      --shadow: #1a0f07;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @font-face {
+      font-family: 'Pixel';
+      src: local('Press Start 2P'), local('Courier New');
+    }
+
+    body {
+      font-family: 'Noto Sans HK', 'PingFang HK', sans-serif;
+      background: var(--bg-dark);
+      min-height: 100vh;
+      padding: 20px;
+      background-image: 
+        linear-gradient(45deg, #3d2514 25%, transparent 25%),
+        linear-gradient(-45deg, #3d2514 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #3d2514 75%),
+        linear-gradient(-45deg, transparent 75%, #3d2514 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* 像素風標題 */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: var(--bg-mid);
+      border: 4px solid var(--cream);
+      padding: 20px;
+      box-shadow: 
+        8px 8px 0 var(--shadow),
+        -4px -4px 0 var(--cream-dark);
+    }
+
+    .header h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 24px;
+      color: var(--yellow);
+      text-shadow: 4px 4px 0 var(--orange-dark);
+      margin-bottom: 15px;
+      line-height: 1.8;
+    }
+
+    .header p {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--cream);
+    }
+
+    /* 像素心仔 */
+    .pixel-heart {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: var(--red);
+      position: relative;
+      transform: rotate(45deg);
+      box-shadow: 2px 2px 0 var(--shadow);
+    }
+
+    .pixel-heart::before,
+    .pixel-heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+
+    .pixel-heart::before {
+      left: -10px;
+    }
+
+    .pixel-heart::after {
+      top: -10px;
+    }
+
+    /* 關係值卡 */
+    .relationships {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .char-card {
+      background: var(--bg-mid);
+      border: 4px solid var(--cream);
+      padding: 15px 20px;
+      text-align: center;
+      box-shadow: 6px 6px 0 var(--shadow);
+    }
+
+    .char-emoji {
+      font-size: 40px;
+      margin-bottom: 8px;
+      image-rendering: pixelated;
+    }
+
+    .char-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    .char-bar-container {
+      width: 100%;
+      height: 16px;
+      background: var(--bg-dark);
+      border: 2px solid var(--cream);
+      position: relative;
+    }
+
+    .char-bar-fill {
+      height: 100%;
+      background: var(--green);
+      transition: width 0.3s steps(10);
+    }
+
+    .char-bar-fill.low { background: var(--red); }
+    .char-bar-fill.medium { background: var(--orange); }
+    .char-bar-fill.high { background: var(--green); }
+
+    .char-value {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: var(--white);
+      margin-top: 5px;
+    }
+
+    /* 情景卡 */
+    .scenario-card {
+      background: var(--bg-mid);
+      border: 4px solid var(--cream);
+      padding: 30px;
+      box-shadow: 8px 8px 0 var(--shadow);
+    }
+
+    .scenario-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--yellow);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .scenario-desc {
+      font-size: 20px;
+      color: var(--white);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      text-align: center;
+      background: var(--bg-dark);
+      padding: 20px;
+      border: 2px solid var(--bg-light);
+    }
+
+    /* 像素選項按鈕 */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .option-btn {
+      background: var(--bg-dark);
+      border: 4px solid var(--cream);
+      padding: 20px 25px;
+      font-family: 'Noto Sans HK', sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      cursor: pointer;
+      transition: all 0.1s steps(5);
+      text-align: left;
+      position: relative;
+    }
+
+    .option-btn::before {
+      content: '►';
+      position: absolute;
+      left: 10px;
+      color: var(--yellow);
+    }
+
+    .option-btn:hover {
+      background: var(--bg-light);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--shadow);
+    }
+
+    .option-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--shadow);
+    }
+
+    .option-letter {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--yellow);
+      margin-right: 10px;
+    }
+
+    /* 結果彈窗 */
+    .result-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .result-overlay.show {
+      display: flex;
+    }
+
+    .result-card {
+      background: var(--bg-mid);
+      border: 4px solid var(--cream);
+      padding: 40px;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 8px 8px 0 var(--shadow);
+    }
+
+    /* FeedbackModal 樣式 */
+    .feedback-modal {
+      max-width: 550px;
+    }
+
+    .feedback-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--yellow);
+      margin-bottom: 20px;
+    }
+
+    .change-amount {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+    }
+    .change-amount.positive { color: var(--green); }
+    .change-amount.negative { color: var(--red); }
+
+    .guidance-tip {
+      font-size: 20px;
+      color: var(--white);
+      line-height: 1.8;
+      margin: 25px 0;
+      padding: 20px;
+      background: var(--bg-dark);
+      border: 2px dashed var(--yellow);
+    }
+
+    .retry-btn {
+      background: transparent;
+      border: 2px solid var(--cream);
+      color: var(--cream);
+      padding: 12px 25px;
+      font-family: 'Noto Sans HK', sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .retry-btn:hover {
+      background: var(--bg-light);
+    }
+
+    /* QuestionCard 元件 */
+    .question-tools {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn {
+      background: var(--bg-dark);
+      border: 2px solid var(--bg-light);
+      color: var(--cream);
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: var(--bg-light);
+      border-color: var(--yellow);
+    }
+
+    .tool-btn.speaking {
+      background: var(--orange);
+      border-color: var(--yellow);
+      animation: pulse 0.5s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .hint-box {
+      background: rgba(255, 217, 63, 0.1);
+      border: 2px dashed var(--yellow);
+      padding: 15px;
+      margin-top: 15px;
+      font-size: 18px;
+      color: var(--yellow);
+      display: none;
+    }
+
+    .hint-box.show {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SceneCard 元件 */
+    .scene-card {
+      margin-bottom: 30px;
+    }
+
+    /* 角色展示區 */
+    .character-stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 20px;
+      min-height: 120px;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: var(--bg-dark);
+      border: 3px solid var(--bg-light);
+      border-radius: 15px;
+      position: relative;
+    }
+
+    .character-avatar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .character-avatar.speaking {
+      transform: scale(1.1);
+    }
+
+    .character-avatar Emoji {
+      font-size: 64px;
+      filter: drop-shadow(3px 3px 0 var(--shadow));
+    }
+
+    .character-avatar.speaking Emoji {
+      animation: bounce 0.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .character-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--cream);
+      margin-top: 8px;
+      background: var(--bg-mid);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    /* 對話氣泡 */
+    .dialogue-bubble {
+      background: white;
+      color: var(--bg-dark);
+      padding: 15px 20px;
+      border-radius: 20px;
+      position: relative;
+      max-width: 80%;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 10px auto;
+    }
+
+    .dialogue-bubble::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 10px solid transparent;
+      border-bottom-color: white;
+    }
+
+    .dialogue-bubble.from-player {
+      background: var(--cream);
+      align-self: flex-end;
+    }
+
+    .dialogue-bubble.from-npc {
+      background: var(--white);
+      align-self: flex-start;
+    }
+
+    /* 場景背景描述 */
+    .scene-background {
+      font-size: 14px;
+      color: var(--bg-light);
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    /* 開始畫面 */
+    .start-screen {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .start-screen h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: var(--yellow);
+      margin-bottom: 20px;
+    }
+
+    .start-screen p {
+      font-size: 18px;
+      color: var(--cream);
+      margin-bottom: 30px;
+      line-height: 1.8;
+    }
+
+    .start-btn {
+      background: var(--green);
+      border: 4px solid var(--yellow);
+      padding: 20px 60px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      color: var(--white);
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 6px 6px 0 var(--shadow);
+      transition: all 0.2s;
+    }
+
+    .start-btn:hover {
+      background: var(--orange);
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 var(--shadow);
+    }
+
+    /* 場景選擇 */
+    .location-selection { margin: 20px 0; }
+    .location-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .location-btn { background: var(--bg-mid); border: 3px solid var(--cream-dark); color: var(--cream); padding: 12px 20px; font-family: 'Noto Sans HK', sans-serif; font-size: 14px; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+    .location-btn:hover { background: var(--bg-light); border-color: var(--yellow); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--shadow); }
+
+    /* SettingsPanel 側邊欄 */
+    .settings-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--bg-mid);
+      border: 2px solid var(--cream);
+      color: var(--cream);
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      z-index: 50;
+      transition: all 0.2s;
+    }
+
+    .settings-toggle:hover {
+      background: var(--bg-light);
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100vh;
+      background: var(--bg-mid);
+      border-left: 4px solid var(--cream);
+      padding: 30px 20px;
+      z-index: 100;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      box-shadow: -8px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .settings-panel.open {
+      right: 0;
+    }
+
+    .settings-panel h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--yellow);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .settings-section {
+      margin-bottom: 25px;
+    }
+
+    .settings-label {
+      font-size: 14px;
+      color: var(--cream);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* 字體滑桿 */
+    .font-slider {
+      width: 100%;
+      height: 10px;
+      -webkit-appearance: none;
+      background: var(--bg-dark);
+      border: 2px solid var(--bg-light);
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .font-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--orange);
+      border: 2px solid var(--yellow);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .font-size-display {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--orange);
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    /* 語速滑桿 */
+    .speed-slider {
+      width: 100%;
+      height: 10px;
+      -webkit-appearance: none;
+      background: var(--bg-dark);
+      border: 2px solid var(--bg-light);
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--green);
+      border: 2px solid var(--yellow);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .speed-display {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--green);
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    /* 開關 toggle */
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      border: 2px solid var(--bg-light);
+      border-radius: 30px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      position: absolute;
+      content: '';
+      height: 22px;
+      width: 22px;
+      left: 2px;
+      bottom: 2px;
+      background: var(--cream);
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(30px);
+    }
+
+    .settings-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: var(--cream);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .settings-close:hover {
+      color: var(--yellow);
+    }
+
+    .result-comment {
+      font-size: 22px;
+      color: var(--white);
+      line-height: 1.8;
+      margin: 25px 0;
+    }
+
+    .result-comment strong {
+      color: var(--yellow);
+    }
+
+    .continue-btn {
+      background: var(--orange);
+      border: 4px solid var(--yellow);
+      padding: 15px 40px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--white);
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--shadow);
+    }
+
+    .continue-btn:hover {
+      background: var(--orange-dark);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--shadow);
+    }
+
+    /* 結局 */
+    .ending-card {
+      background: var(--bg-mid);
+      border: 4px solid var(--yellow);
+      padding: 40px;
+      text-align: center;
+      box-shadow: 8px 8px 0 var(--shadow);
+      background: linear-gradient(180deg, var(--bg-mid) 0%, var(--orange-dark) 100%);
+    }
+
+    .ending-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 20px;
+      color: var(--yellow);
+      margin-bottom: 20px;
+      text-shadow: 3px 3px 0 var(--shadow);
+    }
+
+    .ending-desc {
+      font-size: 20px;
+      color: var(--white);
+      line-height: 1.8;
+    }
+
+    .restart-btn {
+      background: var(--green);
+      border: 4px solid var(--white);
+      padding: 15px 35px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: var(--white);
+      cursor: pointer;
+      margin-top: 25px;
+      box-shadow: 4px 4px 0 var(--shadow);
+    }
+
+    .restart-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--shadow);
+    }
+
+    /* Teacher Mode */
+    .home-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: var(--bg-dark);
+      color: var(--cream);
+      border: 2px solid var(--cream);
+      cursor: pointer;
+    }
+    .home-btn:hover {
+      background: var(--cream);
+      color: var(--bg-dark);
+    }
+
+    /* Progress Bar */
+    .progress-container { margin-bottom: 15px; }
+    .progress-label { font-size: 12px; color: var(--cream); margin-bottom: 5px; }
+    .progress-bar { height: 12px; background: var(--bg-dark); border: 2px solid var(--cream); border-radius: 6px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); transition: width 0.3s ease; }
+
+    /* Learning Points */
+    .learning-points {
+      margin: 20px 0;
+      padding: 15px;
+      background: var(--bg-mid);
+      border: 2px solid var(--yellow);
+      border-radius: 8px;
+    }
+
+    /* Relationship Bar */
+    .relationship-bar-container {
+      right: 15px;
+      background: var(--bg-mid);
+      border: 2px solid var(--cream);
+      color: var(--cream);
+      padding: 8px 15px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      padding: 30px;
+      color: var(--white);
+      overflow: auto;
+      z-index: 200;
+    }
+
+    .admin-panel.show {
+      display: block;
+    }
+
+    .admin-panel textarea {
+      width: 100%;
+      height: 50vh;
+      font-size: 14px;
+      font-family: monospace;
+      background: var(--bg-mid);
+      color: var(--cream);
+      border: 2px solid var(--cream);
+      padding: 15px;
+    }
+
+    .admin-panel h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: var(--yellow);
+      margin-bottom: 15px;
+    }
+
+    .admin-panel button {
+      background: var(--orange);
+      border: 2px solid var(--yellow);
+      color: var(--white);
+      padding: 12px 25px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 15px;
+    }
+
+    /* 動畫 - 像素閃爍 */
+    @keyframes pixel-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .blink {
+      animation: pixel-blink 1s steps(2) infinite;
+    }
+
+    /* 像素裝飾 */
+    .pixel-decor {
+      position: fixed;
+      font-size: 24px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* 響應式 */
+    @media (min-width: 768px) {
+      .header h1 { font-size: 28px; }
+      .scenario-card { padding: 40px; }
+      .scenario-desc { font-size: 22px; }
+    }
+
+    /* Certificate Styles */
+    .cert {
+      background: linear-gradient(180deg, #1a472a 0%, #2d1b0e 100%);
+      border: 8px solid var(--cream);
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .cert.gold { border-color: #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+    .cert.silver { border-color: #c0c0c0; box-shadow: 0 0 30px rgba(192, 192, 192, 0.4); }
+    .cert.bronze { border-color: #cd7f32; box-shadow: 0 0 25px rgba(205, 127, 50, 0.4); }
+    .cert-title { font-size: 28px; color: var(--yellow); margin-bottom: 20px; }
+    .cert-name { font-size: 24px; color: var(--cream); margin: 20px 0; border-bottom: 2px solid var(--cream); padding: 10px; }
+    .cert-rank { font-size: 48px; margin: 20px 0; }
+    .cert-stats { font-size: 14px; color: var(--cream); margin: 20px 0; }
+    .cert-date { font-size: 12px; color: var(--bg-light); margin-top: 20px; }
+
+    /* 學習技能進度條 */
+    .skill-progress { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 15px 0; }
+    .skill-item { background: var(--bg-dark); border: 2px solid var(--cream-dark); border-radius: 8px; padding: 8px 12px; text-align: center; min-width: 80px; transition: all 0.3s; }
+    .skill-item.unlocked { border-color: var(--yellow); background: rgba(255,217,63,0.15); }
+    .skill-item.maxed { border-color: var(--green); background: rgba(76,175,80,0.2); }
+    .skill-emoji { font-size: 20px; display: block; }
+    .skill-name { font-size: 10px; color: var(--cream); font-family: 'Press Start 2P', monospace; display: block; margin-top: 4px; }
+    .skill-level { font-size: 9px; color: var(--yellow); font-family: 'Press Start 2P', monospace; }
+
+    /* 概念卡牌 */
+    .concept-cards { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+    .concept-card { width: 70px; height: 90px; background: var(--bg-dark); border: 3px solid var(--bg-light); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; }
+    .concept-card.unlocked { border-color: var(--yellow); box-shadow: 0 0 10px rgba(255,217,63,0.3); }
+    .concept-card .card-emoji { font-size: 28px; }
+    .concept-card .card-name { font-size: 8px; color: var(--cream); text-align: center; padding: 4px; word-break: break-word; }
+    .concept-card .card-lock { font-size: 20px; opacity: 0.5; }
+    .concept-card:hover { transform: translateY(-5px); }
+    .concept-card .card-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--bg-mid); border: 2px solid var(--yellow); padding: 8px 12px; border-radius: 8px; font-size: 12px; color: var(--cream); white-space: nowrap; z-index: 10; display: none; }
+    .concept-card:hover .card-tooltip { display: block; }
+
+    /* 粒子效果容器 */
+    .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; overflow: hidden; }
+    .particle { position: absolute; font-size: 20px; animation: particle-fly 1s ease-out forwards; }
+    @keyframes particle-fly { 0% { opacity: 1; transform: translate(0,0) scale(1); } 100% { opacity: 0; transform: translate(var(--tx),var(--ty)) scale(0.5); } }
+
+    /* 螢幕震動 */
+    .shake { animation: screen-shake 0.3s ease-out; }
+    @keyframes screen-shake { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-5px,5px); } 40% { transform: translate(5px,-5px); } 60% { transform: translate(-3px,3px); } 80% { transform: translate(3px,-3px); } }
+
+    /* 正向選擇效果 */
+    .positive-flash { animation: positive-glow 0.5s ease-out; }
+    @keyframes positive-glow { 0% { box-shadow: 0 0 0 rgba(76,175,80,0); } 50% { box-shadow: 0 0 30px rgba(76,175,80,0.5); } 100% { box-shadow: 0 0 0 rgba(76,175,80,0); } }
+
+    /* 負向選擇效果 */
+    .negative-flash { animation: negative-pulse 0.4s ease-out; }
+    @keyframes negative-pulse { 0% { transform: scale(1); } 30% { transform: scale(0.95); } 60% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+    /* Accessibility: reduce motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* 禁用動畫時既簡化樣式 */
+    .reduced-motion .particle,
+    .reduced-motion .shake,
+    .reduced-motion .positive-flash,
+    .reduced-motion .negative-flash {
+      animation: none !important;
+      opacity: 1;
+      transform: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏫 友愛教室<br>像素大冒險</h1>
+      <p>❤️ 友情力 MAX!</p>
+    </div>
+
+    <!-- 關係值心仔 -->
+    <div class="relationships" id="relationships"></div>
+
+<!-- 遊戲區 -->
+    <div id="game-area">
+      <!-- 開始畫面 -->
+      <div class="scenario-card start-screen" id="start-screen">
+        <h2>🏫 友愛教室</h2>
+        <p>呢個遊戲會教你點樣尊重朋友、關心他人<br>既係友誼既技巧！</p>
+        
+        <!-- 玩家名稱輸入 -->
+        <div style="margin:20px 0;">
+          <input type="text" id="player-name" placeholder="輸入你既名字" 
+                 style="padding:12px 20px;font-size:16px;background:var(--bg-dark);color:var(--cream);
+                        border:2px solid var(--cream);border-radius:8px;text-align:center;width:200px;">
+        </div>
+        
+        <!-- 場景選擇 -->
+        <div class="location-selection">
+          <p style="color:var(--cream);font-size:14px;margin:20px 0 10px;">選擇情景：</p>
+          <div class="location-buttons">
+            <button class="location-btn" onclick="startGame('classroom')">🏫 課室</button>
+            <button class="location-btn" onclick="startGame('break')">🌸 小息</button>
+            <button class="location-btn" onclick="startGame('home')">🏠 放學後家中</button>
+          </div>
+        </div>
+        
+        <button class="start-btn" onclick="startGame('random')">🎲 隨機開始</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <button class="settings-toggle" onclick="toggleSettings()">⚡ 設定</button>
+  
+  <div class="settings-panel" id="settings-panel">
+    <button class="settings-close" onclick="toggleSettings()">×</button>
+    <h2>⚡ 設定</h2>
+    
+    <div class="settings-section">
+      <span class="settings-label">字體大小</span>
+      <input type="range" class="font-slider" id="fontSizeSlider" min="14" max="32" value="20" oninput="updateFontSize(this.value)">
+      <div class="font-size-display" id="fontDisplay">20px</div>
+    </div>
+    
+    <div class="settings-section">
+      <span class="settings-label">語速</span>
+      <input type="range" class="speed-slider" id="speedSlider" min="0.5" max="1.5" step="0.1" value="0.9" oninput="updateSpeed(this.value)">
+      <div class="speed-display" id="speedDisplay">0.9x</div>
+    </div>
+    
+    <div class="settings-section">
+      <span class="settings-label">音效</span>
+      <div class="settings-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="soundToggle" checked onchange="toggleSound(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="soundStatus" style="color:var(--cream);font-size:14px;">開</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="admin-panel">
+    <h2>📝 編輯情景庫 (JSON)</h2>
+    <textarea id="json-editor"></textarea>
+    <div style="margin-top:10px">
+    <button onclick="saveScenarios()">💾 儲存</button>
+    <button onclick="toggleAdmin()">❌ 取消</button>
+    <button onclick="resetGame()">🏠 回首頁</button>
+    </div>
+  </div>
+
+  <script>
+    let gameData = { scenarios: [], endings: [] };
+    let relationships = {};
+    let currentScenario = null;
+    let currentScenarioNum = 0;
+    let totalScenarios = 0; // 動態計算
+    let completedScenarios = [];
+    
+    // Settings
+    let settings = {
+      fontSize: 20,
+      speechRate: 0.9,
+      soundEnabled: true,
+      playerName: ''
+    };
+
+    // Get player name (from input or saved)
+    function getPlayerName() {
+      const input = document.getElementById('player-name');
+      if (input && input.value.trim()) {
+        settings.playerName = input.value.trim();
+        saveSettings();
+        return settings.playerName;
+      }
+      return settings.playerName || '同學';
+    }
+
+    // Audio System (Web Audio API - no external files needed)
+    const AudioSys = {
+      ctx: null,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      },
+      playTone(freq, duration, type = 'sine', volume = 0.3) {
+        if (!settings.soundEnabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = volume;
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      },
+      // UI click
+      click() { this.playTone(800, 0.1, 'square', 0.1); },
+      // Positive choice
+      success() { 
+        this.playTone(523, 0.2, 'sine', 0.2);
+        setTimeout(() => this.playTone(659, 0.2, 'sine', 0.2), 100);
+      },
+      // Negative choice  
+      fail() { 
+        this.playTone(200, 0.3, 'sawtooth', 0.15); 
+      },
+      // Badge獲得
+      badge() {
+        this.playTone(784, 0.15, 'sine', 0.2);
+        setTimeout(() => this.playTone(988, 0.15, 'sine', 0.2), 80);
+        setTimeout(() => this.playTone(1319, 0.3, 'sine', 0.25), 160);
+      },
+      // Game complete
+      complete() {
+        [523, 659, 784, 1047].forEach((f, i) => 
+          setTimeout(() => this.playTone(f, 0.2, 'sine', 0.2), i * 150)
+        );
+      }
+    };
+
+    // Game Stats (gamification)
+    let gameStats = {
+      gamesPlayed: 0,
+      totalScore: 0,
+      bestScore: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      perfectGames: 0, // all positive choices
+      badges: [], // earned badges
+      skills: { empathy: 0, respect: 0, courage: 0, honesty: 0, kindness: 0, communication: 0 }, // 6核心友誼技能
+      unlockedConcepts: [] // 解鎖既概念卡
+    };
+
+    // 6大核心友誼技能定義
+    const SKILLS = {
+      empathy: { id: 'empathy', name: '同理心', emoji: '💭', desc: '理解他人感受', max: 5 },
+      respect: { id: 'respect', name: '尊重', emoji: '🤝', desc: '尊重唔同既人', max: 5 },
+      courage: { id: 'courage', name: '勇氣', emoji: '💪', desc: '敢於做啱既事', max: 5 },
+      honesty: { id: 'honesty', name: '誠實', emoji: '💎', desc: '話真相', max: 5 },
+      kindness: { id: 'kindness', name: '善良', emoji: '💖', desc: '關心他人', max: 5 },
+      communication: { id: 'communication', name: '溝通', emoji: '🗣️', desc: '表達感受', max: 5 }
+    };
+
+    // 概念卡牌定義 (Slay the Spire style)
+    const CONCEPTS = [
+      { id: 'active_listening', name: '積極聆聽', emoji: '👂', skill: 'empathy', desc: '用全心全意聆聽，唔係只用耳仔' },
+      { id: 'i_statement', name: 'I開頭', emoji: '🙋', skill: 'communication', desc: '用「我感覺...」唔係「你點點點」' },
+      { id: 'nonviolent', name: '非暴力', emoji: '🕊️', skill: 'respect', desc: '用言語解決衝突，唔係拳頭' },
+      { id: 'boundary', name: '設界線', emoji: '🚧', skill: 'courage', desc: '學識話「不」，唔係永遠say yes' },
+      { id: 'apology', name: '道歉', emoji: '🙇', skill: 'honesty', desc: '錯咗要認，勇氣既表現' },
+      { id: 'gratitude', name: '感謝', emoji: '🙏', skill: 'kindness', desc: '講多謝唔使本，但令人好開心' },
+      { id: 'forgiveness', name: '原諒', emoji: '🧠', skill: 'empathy', desc: '原諒係放過自己，既唔係忘記' },
+      { id: 'peer_pressure', name: '朋輩壓力', emoji: '💁', skill: 'courage', desc: '大多數既選擇唔一定啱' }
+    ];
+
+    // Badge definitions - 增強版
+    const BADGES = [
+      // 基礎進度 badges
+      { id: 'first_friend', name: '初試友誼', emoji: '🌱', desc: '完成第一次遊戲', condition: (stats) => stats.gamesPlayed >= 1 },
+      { id: 'veteran', name: '友誼老友', emoji: '👵', desc: '完成 5 次遊戲', condition: (stats) => stats.gamesPlayed >= 5 },
+      { id: 'dedicated', name: '堅持不懈', emoji: '💪', desc: '完成 10 次遊戲', condition: (stats) => stats.gamesPlayed >= 10 },
+      
+      // 分數 badges
+      { id: 'friendship_master', name: '友誼大師', emoji: '🏆', desc: '平均好感度 ≥80', condition: (stats) => stats.bestScore >= 80 },
+      { id: 'high_scorer', name: '高分達人', emoji: '🌟', desc: '單次遊戲 ≥70', condition: (stats) => stats.bestScore >= 70 },
+      
+      // Streak badges
+      { id: 'streak_3', name: '三連友', emoji: '🔥', desc: '連續 3 次高分', condition: (stats) => stats.bestStreak >= 3 },
+      { id: 'streak_5', name: '五星連友', emoji: '⭐', desc: '連續 5 次高分', condition: (stats) => stats.bestStreak >= 5 },
+      { id: 'streak_10', name: '十星連友', emoji: '💫', desc: '連續 10 次高分', condition: (stats) => stats.bestStreak >= 10 },
+      
+      // 完美遊戲 badges
+      { id: 'perfect', name: '完美好友', emoji: '💎', desc: '一次完美遊戲 (全正)', condition: (stats) => stats.perfectGames >= 1 },
+      { id: 'perfect_3', name: '三連完美', emoji: '✨', desc: '3 次完美遊戲', condition: (stats) => stats.perfectGames >= 3 },
+      
+      // 技能相關徽章 - 每個技能 MAX 時頒發
+      { id: 'empathy_master', name: '同理心大師', emoji: '💭', desc: '同理心技能 MAX', condition: (stats) => (stats.skills?.empathy || 0) >= 5 },
+      { id: 'respect_master', name: '尊重達人', emoji: '🤝', desc: '尊重技能 MAX', condition: (stats) => (stats.skills?.respect || 0) >= 5 },
+      { id: 'courage_master', name: '勇氣之星', emoji: '🦸', desc: '勇氣技能 MAX', condition: (stats) => (stats.skills?.courage || 0) >= 5 },
+      { id: 'honesty_master', name: '誠實之星', emoji: '💎', desc: '誠實技能 MAX', condition: (stats) => (stats.skills?.honesty || 0) >= 5 },
+      { id: 'kindness_master', name: '善良天使', emoji: '👼', desc: '善良技能 MAX', condition: (stats) => (stats.skills?.kindness || 0) >= 5 },
+      { id: 'communication_master', name: '溝通達人', emoji: '🗣️', desc: '溝通技能 MAX', condition: (stats) => (stats.skills?.communication || 0) >= 5 },
+      
+      // 概念卡收集 badges
+      { id: 'concept_collector', name: '概念獵人', emoji: '🃏', desc: '收集 5 張概念卡', condition: (stats) => (stats.unlockedConcepts?.length || 0) >= 5 },
+      { id: 'concept_master', name: '概念大師', emoji: '🎓', desc: '收集所有概念卡', condition: (stats) => (stats.unlockedConcepts?.length || 0) >= 8 },
+      
+      // 多技能組合 badges
+      { id: 'balanced_friend', name: '平衡發展', emoji: '⚖️', desc: '擁有 3 種以上技能', condition: (stats) => Object.values(stats.skills || {}).filter(s => s >= 1).length >= 3 },
+      { id: 'all_rounder', name: '全能好友', emoji: '🌈', desc: '擁有 5 種以上技能', condition: (stats) => Object.values(stats.skills || {}).filter(s => s >= 1).length >= 5 }
+    ];
+    
+    // Cache for character emojis
+    let characterEmojiCache = {};
+    
+    // Game state for retry
+    let previousRelationships = null;
+    let currentOnContinue = null;
+    
+    // 初始化
+    async function init() {
+      loadSettings();
+      loadRelationships();
+      loadGameStats(); // Load gamification stats
+      await loadScenarios();
+      applySettings();
+      // Don't auto-start - wait for user to click "開始" button
+      // startGame() is called by onclick in HTML
+    }
+    
+    // 載入設定
+    function loadSettings() {
+      const saved = localStorage.getItem('friendly-classroom-settings');
+      if (saved) {
+        settings = JSON.parse(saved);
+      }
+    }
+    
+    // 套用設定
+    function applySettings() {
+      const fontSlider = document.getElementById('fontSizeSlider');
+      if (fontSlider) fontSlider.value = settings.fontSize;
+      const fontDisplay = document.getElementById('fontDisplay');
+      if (fontDisplay) fontDisplay.innerText = settings.fontSize + 'px';
+      const speedSlider = document.getElementById('speedSlider');
+      if (speedSlider) speedSlider.value = settings.speechRate;
+      const speedDisplay = document.getElementById('speedDisplay');
+      if (speedDisplay) speedDisplay.innerText = settings.speechRate + 'x';
+      
+      // Sound toggle
+      const soundToggle = document.getElementById('soundToggle');
+      if (soundToggle) soundToggle.checked = settings.soundEnabled;
+      const soundStatus = document.getElementById('soundStatus');
+      if (soundStatus) soundStatus.innerText = settings.soundEnabled ? '開' : '關';
+      
+      // Font sizes
+      const elements = document.querySelectorAll('.scenario-desc, .dialogue-bubble, .option-btn, .hint-box, .result-comment');
+      elements.forEach(el => {
+        el.style.fontSize = settings.fontSize + 'px';
+      });
+    }
+    
+    // 儲存設定
+    function saveSettings() {
+      localStorage.setItem('friendly-classroom-settings', JSON.stringify(settings));
+    }
+
+// 讀取情景數據 - 內置 default
+    function getDefaultScenarios() {
+      return {
+  "scenarios": [
+    {
+      "id": "s1",
+      "title": "關卡1：嘲笑同學",
+      "background": "課室・小息時間",
+      "description": "小傑指著正在玩既小宇話：「我哋一齊笑佢好唔好？佢著既衫咁樣好搞笑呀！」",
+      "hint": "語言暴力唔洗血，但一樣可以殺死人心 —— 「我只係講下」永遠唔會知有几傷",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小宇",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s1-a",
+          "text": "跟住一齊笑",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 10,
+              "comment": "你同小傑笑得好開心！但係小宇低頭就走咗。第二日你見到小宇覺得好心虛..."
+            }
+          ],
+          "next_scenario": "s2"
+        },
+        {
+          "id": "s1-b",
+          "text": "靜靜地走開",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 0,
+              "comment": "你走開咗，但係成晚在想：「我應該講啲咩？」第二日你聽見小宇因為太傷心請假沒返學..."
+            },
+            {
+              "character": "小宇",
+              "change": 5,
+              "comment": "小宇唔知你既事，但係如果你出聲可能會唔同..."
+            }
+          ],
+          "next_scenario": "s2"
+        },
+        {
+          "id": "s1-c",
+          "text": "「我唔覺得好笑，每個人都可以著自己鍾意既衫」",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": -5,
+              "comment": "小傑話：「你唔夠朋友呀！」但係小宇望向你眼神裡有啲感謝..."
+            },
+            {
+              "character": "小宇",
+              "change": 20,
+              "comment": "小宇話：「多謝你呀...」點點頭就跑開咗。"
+            }
+          ],
+          "next_scenario": "s2"
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s2",
+      "title": "關卡2：幫手匿贓",
+      "background": "走廊・晏晝",
+      "description": "小強拉著你話：「幫我一個忙，我啱先拎咗啱嘢既玩具車，帮我匿埋佢！」",
+      "hint": "幫人匿贓等於做幫兇 —— 真正既朋友會勸你還返，唔係匿埋",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s2-a",
+          "text": "答應幫佢匿",
+          "effects": [
+            {
+              "character": "小強",
+              "change": 10,
+              "comment": "你帮手匿咗入抽屜。结果老師發現監視器，以為係你偷！你喊咗但唔敢講真相，怕失去呢個「朋友」..."
+            }
+          ],
+          "next_scenario": "s3"
+        },
+        {
+          "id": "s2-b",
+          "text": "唔幫手亦唔話",
+          "effects": [
+            {
+              "character": "小強",
+              "change": -5,
+              "comment": "小強之後比老師發現，但係同老師話：「係佢叫我匿既！」你有口難言..."
+            },
+            {
+              "character": "小強",
+              "change": -10,
+              "comment": "小強之後俾人鬧，但係你覺得如果一開始勸佢還返就好啦..."
+            }
+          ],
+          "next_scenario": "s3"
+        },
+        {
+          "id": "s2-c",
+          "text": "「我哋一齊還返啦」",
+          "effects": [
+            {
+              "character": "小強",
+              "change": 15,
+              "comment": "小強話：「...好啦，对唔住。」你陪佢還咗去，小強多謝你陪佢面對！"
+            }
+          ],
+          "next_scenario": "s3"
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s3",
+      "title": "關卡3：新朋友",
+      "background": "操場・晏晝",
+      "description": "小美最近成日同新同學玩，都唔理你啦。你覺得心裡酸酸地...",
+      "hint": "真朋友會尊重你既選擇，唔會因為你同第二個玩就唔理你",
+      "characters": [
+        {
+          "name": "小美",
+          "emoji": "👩‍🎓",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s3-a",
+          "text": "嬲既質問佢",
+          "effects": [
+            {
+              "character": "小美",
+              "change": -20,
+              "comment": "你衝過去大聲問，小美嚇一跳：「我淨係想識新朋友之嘛...」全班望住你，你覺得更加丟臉..."
+            }
+          ],
+          "next_scenario": "s4"
+        },
+        {
+          "id": "s3-b",
+          "text": "覺得自己唔好，不再同佢講話",
+          "effects": [
+            {
+              "character": "小美",
+              "change": -10,
+              "comment": "你成日坐係度諗：「我果然唔值得被鍾意...」你越來越唔想講野..."
+            },
+            {
+              "character": "小美",
+              "change": 5,
+              "comment": "小美唔知你諗緊咩，但係見到你唔開心都有啲擔心..."
+            }
+          ],
+          "next_scenario": "s4"
+        },
+        {
+          "id": "s3-c",
+          "text": "平靜咁話：「我有啲難過，我哋仲係好朋友嗎？」",
+          "effects": [
+            {
+              "character": "小美",
+              "change": 20,
+              "comment": "小美即刻話：「梗係啦！我淨係想多識一个人之嘛，你永远都好重要！」"
+            }
+          ],
+          "next_scenario": "s4"
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s4",
+      "title": "關卡4：邊個整跌既花盆？",
+      "background": "課室・下晝",
+      "description": "你見到小強唔小心整跌咗老師既花盆，但係佢同老師話：「係風吹跌既！」",
+      "hint": "做錯嘢唔怕認 —— 怕既係唔認既人",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s4-a",
+          "text": "扮作唔知道",
+          "effects": [
+            {
+              "character": "小強",
+              "change": 5,
+              "comment": "老師信咗小強。但係花盆既植物枯死咗，小強之後話：「 Victoria 唔會發現！」你心裡沉沉地..."
+            },
+            {
+              "character": "老師",
+              "change": -10,
+              "comment": "老師唔知真相，但係你覺得自己做錯咗..."
+            }
+          ],
+          "next_scenario": "s5"
+        },
+        {
+          "id": "s4-b",
+          "text": "大聲話係小強整既",
+          "effects": [
+            {
+              "character": "小強",
+              "change": -25,
+              "comment": "你大聲話係小強，小強一面紅，下堂之後反面：「叛徒！」你哋之後冇再講野，你心裡空左..."
+            },
+            {
+              "character": "老師",
+              "change": 10,
+              "comment": "老師知道你肯話真相，但你失去咗一個朋友..."
+            }
+          ],
+          "next_scenario": "s5"
+        },
+        {
+          "id": "s4-c",
+          "text": "私下同小強講：「你仲老師話實話啦，我陪你一齊去」",
+          "effects": [
+            {
+              "character": "小強",
+              "change": 20,
+              "comment": "小強話：「...好啦，對唔住。」你陪佢同一齊去認錯，老師話：「知錯能改就係好孩子！」"
+            }
+          ],
+          "next_scenario": "s5"
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s5",
+      "title": "關卡5：整蠱仔",
+      "background": "操場・晏晝",
+      "description": "小芳偷偷同你講：「我哋將安安既水壺匿埋，等佢搵唔到好好笑！」",
+      "hint": "整蠱如果令人難過，就唔係好玩 —— 笑住整親人並唔好笑",
+      "characters": [
+        {
+          "name": "小芳",
+          "emoji": "👩‍🎓",
+          "initial_relationship": 50
+        },
+        {
+          "name": "安安",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s5-a",
+          "text": "參與呢個整蠱",
+          "effects": [
+            {
+              "character": "小芳",
+              "change": 10,
+              "comment": "安安置咗好耐搵唔到水壺，最後惟有飲自來水。放學時佢媽媽知咗都好嬲，你聽到：「啲細路點解咁曳？」你訓左差啲..."
+            },
+            {
+              "character": "安安",
+              "change": -20,
+              "comment": "安安急到喊，你心裡好內疚..."
+            }
+          ],
+          "next_scenario": "s6"
+        },
+        {
+          "id": "s5-b",
+          "text": "「我...我唔敢」",
+          "effects": [
+            {
+              "character": "小芳",
+              "change": -10,
+              "comment": "嗰班同學笑你細胆之后就唔再搵你玩。你觉得你似個懦夫，正義都不敢..."
+            },
+            {
+              "character": "安安",
+              "change": 0,
+              "comment": "至少你冇參與..."
+            }
+          ],
+          "next_scenario": "s6"
+        },
+        {
+          "id": "s5-c",
+          "text": "「咁樣會令安安難過我不想參加」",
+          "effects": [
+            {
+              "character": "小芳",
+              "change": 5,
+              "comment": "小芳話：「 Victoria 咁呀...算啦。」佢嫌你無癮，但係你守得住自己既善良！"
+            },
+            {
+              "character": "安安",
+              "change": 10,
+              "comment": "安安唔知呢件事，但係你好似做啱咗..."
+            }
+          ],
+          "next_scenario": "s6"
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s6",
+      "title": "關卡6：鬧交",
+      "background": "課室・晏晝",
+      "description": "小明好嬲話：「我再都唔同小華玩啦！佢整壞咗我既玩具！」",
+      "hint": "衝突時先聽再做判斷 —— 你既諗法可能同事實唔啱",
+      "characters": [
+        {
+          "name": "小明",
+          "emoji": "👦",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小華",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s6-a",
+          "text": "「係呀！小華太衰啦！我都唔同佢玩！」",
+          "effects": [
+            {
+              "character": "小明",
+              "change": 10,
+              "comment": "你同小明一齊排斥小華。但係之後你先知，小華係唔小心整壞既嘢，佢本來想道歉但搵唔倒機會。小華喊咗，你覺得自己做錯咗..."
+            },
+            {
+              "character": "小華",
+              "change": -25,
+              "comment": "小華覺得被誤會，好傷心..."
+            }
+          ],
+          "next_scenario": "s7"
+        },
+        {
+          "id": "s6-b",
+          "text": "乜都唔話",
+          "effects": [
+            {
+              "character": "小明",
+              "change": 0,
+              "comment": "小明越話越嬲仲搵其他人一齊排斥小華。你雖然冇參與但係都冇阻止。見到小華一個你心裡唔舒服..."
+            },
+            {
+              "character": "小華",
+              "change": -10,
+              "comment": "小華覺得自己一個人..."
+            }
+          ],
+          "next_scenario": "s7"
+        },
+        {
+          "id": "s6-c",
+          "text": "「或者佢唔係故意？你有問過佢嗎？」",
+          "effects": [
+            {
+              "character": "小明",
+              "change": 15,
+              "comment": "小明諗咗下：「嗯...都係問下先...」之後發現係誤會，佢同小華和好咗！你幫佢哋化解咗爭執！"
+            },
+            {
+              "character": "小華",
+              "change": 10,
+              "comment": "小華多謝你幫佢講说话！"
+            }
+          ],
+          "next_scenario": "s7"
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s7",
+      "title": "關卡7：安慰朋友",
+      "background": "操場・體育堂後",
+      "description": "小珍喊住搵你：「佢哋笑我跑得慢...我唔想上體育課啦...」",
+      "hint": "朋友難過時，陪伴同理解先係最好既安慰",
+      "characters": [
+        {
+          "name": "小珍",
+          "emoji": "👧",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s7-a",
+          "text": "「唔好喊啦，你既確跑得慢呀」",
+          "effects": [
+            {
+              "character": "小珍",
+              "change": -20,
+              "comment": "小珍喊得更大聲，覺得你唔明白佢。之後佢唔再好同你分享心事，你哋既友誼出現裂痕..."
+            }
+          ],
+          "next_scenario": "s8"
+        },
+        {
+          "id": "s7-b",
+          "text": "「冇所謂啦，唔好在意」",
+          "effects": [
+            {
+              "character": "小珍",
+              "change": -5,
+              "comment": "小珍點點頭，但係你睇得出佢仲係好難過。下次體育課佢扮肚痛唔想參加。你觉得你既安慰好似冇幫到佢..."
+            },
+            {
+              "character": "小珍",
+              "change": 5,
+              "comment": "至少有你在..."
+            }
+          ],
+          "next_scenario": "s8"
+        },
+        {
+          "id": "s7-c",
+          "text": "「被笑一定好難過。跑步速度唔重要，重要的是你有參與！」",
+          "effects": [
+            {
+              "character": "小珍",
+              "change": 20,
+              "comment": "小珍即刻笑咗：「多謝你呀！你最明白我！」之後體育堂佢好積極咁參與！"
+            }
+          ],
+          "next_scenario": "s8"
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s8",
+      "title": "關卡8：一個人坐",
+      "background": "操場・晏晝",
+      "description": "你自己一個人坐係長椅度，望住其他同學度玩，心裡有啲難過...",
+      "hint": "孤單時要踏出第一步 —— 其他人可能等緊你先開口",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s8-a",
+          "text": "繼續坐係度，覺得冇人鍾意我",
+          "effects": [
+            {
+              "character": "同學A",
+              "change": -5,
+              "comment": "你成個下晝都坐係度，心情越來越低落。返到屋企你同媽媽話：「我冇朋友...」媽媽好擔心，但係你唔知點改變..."
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s8-b",
+          "text": "搵老師傾下我既心情",
+          "effects": [
+            {
+              "character": "老師",
+              "change": 15,
+              "comment": "老師好好心機聽你講，話：「不如搵啲同學一齊玩啦？」之後老師幫你介紹咗幾個朋友，你逐步逐步融入咗！"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s8-c",
+          "text": "去問其他同學：「我可以一齊玩嗎？」",
+          "effects": [
+            {
+              "character": "同學A",
+              "change": 20,
+              "comment": "你真係好勇敢！嗰個同學即刻話：「梗係可以啦！一齊啦！」你交咗新朋友，原來主動一啲都唔難！"
+            }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "break"
+    },
+    {
+      "id": "s-c1",
+      "title": "關卡：唔借筆比同学",
+      "location": "classroom",
+      "background": "課室・上堂",
+      "description": "小美問你：「借支筆比我好唔好？」",
+      "hint": "一支筆可以建立一段友誼 —— 點解唔試下？",
+      "characters": [
+        {
+          "name": "小美",
+          "emoji": "👩‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-c1-a",
+          "text": "話你自己問人啦",
+          "effects": [
+            {
+              "character": "小美",
+              "change": -10,
+              "comment": "小美話算啦，之後冇再問你"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c1-b",
+          "text": "借比佢",
+          "effects": [
+            {
+              "character": "小美",
+              "change": 15,
+              "comment": "小美話多謝你，建立咗一段新友誼"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c2",
+      "title": "關卡：杯葛",
+      "location": "classroom",
+      "background": "課室・小息",
+      "description": "有同学話如果你同某人一齊玩，就唔同你玩",
+      "hint": "真正既朋友唔會迫你放棄其他朋友 —— 佢想控制你",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小美",
+          "emoji": "👩‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-c2-a",
+          "text": "好啦，我唔同佢玩啦",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": -20,
+              "comment": "小傑望住你，唔出聲就走開咗"
+            },
+            {
+              "character": "小玲",
+              "change": 5,
+              "comment": "但你心裡有啲唔舒服"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c2-b",
+          "text": "我既朋友我自己選擇",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 20,
+              "comment": "小傑話多謝你，你哋既友情更加堅固"
+            },
+            {
+              "character": "小玲",
+              "change": -10,
+              "comment": "你好似釋然咗"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-b1",
+      "title": "關卡：語言暴力",
+      "location": "break",
+      "background": "操場・晏晝",
+      "description": "有同学話你：「你好曳！你同豬一樣！」",
+      "hint": "一句說話可以令人記一世 —— 語言既傷係最深既",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-b1-a",
+          "text": "話你都好曳啦",
+          "effects": [
+            {
+              "character": "小強",
+              "change": -20,
+              "comment": "你同大打起來，要罰企"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-b1-b",
+          "text": "話你咁樣講我，我好唔開心",
+          "effects": [
+            {
+              "character": "小強",
+              "change": 10,
+              "comment": "小強話我只是玩之嘛，之後冇再咁樣講"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-h1",
+      "title": "關卡：網上欺凌",
+      "location": "home",
+      "background": "家中・夜晚",
+      "description": "你發現有人係班Group度發你既相，加啱衰caption全班笑你",
+      "hint": "網上既野唔會delete —— 有圖有真相，block都洗唔甩",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-h1-a",
+          "text": "發脾氣鬧全班",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": -15,
+              "comment": "越好激動但冇人理，状況仲越鬧越大"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-h1-b",
+          "text": "搵家長幫手",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 5,
+              "comment": "媽媽幫你report上去，發布者被記名"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-h2",
+      "title": "關卡：秘密被公開",
+      "location": "home",
+      "background": "家中・夜晚",
+      "description": "你發現小傑爆咗你既秘密出去，全班笑你",
+      "hint": "秘密講比第二個聽既一刻，就已經唔係秘密",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-h2-a",
+          "text": "話我以後都唔同你做朋友",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": -25,
+              "comment": "小傑話洗鬼理你，你兩個反面"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-h2-b",
+          "text": "原諒佢，但講多次不可以",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 10,
+              "comment": "小傑話sorry，你学識咗原諒同設定界線"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-h3",
+      "title": "關卡：電玩霸權",
+      "location": "home",
+      "background": "家中・夜晚",
+      "description": "你同表弟一齊打電玩，表弟話：「你住手！我話晒點玩！」",
+      "hint": "輪流玩先至道理 —— 咁樣先公平",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-h3-a",
+          "text": "發脾氣唔玩",
+          "effects": [
+            {
+              "character": "表弟",
+              "change": -10,
+              "comment": "表弟話正好，我可以自己玩"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-h3-b",
+          "text": "話我哋輪流做主將",
+          "effects": [
+            {
+              "character": "表弟",
+              "change": 15,
+              "comment": "表弟話好啦，一人一關！你哋玩得好開心"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-h4",
+      "title": "關卡：屋企人比較",
+      "location": "home",
+      "background": "家中・夜晚",
+      "description": "媽媽話：「你睇下人既小朋友幾乖！你就曳曳！」",
+      "hint": "比較會傷害自信 —— 每個人都唔同",
+      "characters": [
+        {
+          "name": "小美",
+          "emoji": "👩",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-h4-a",
+          "text": "喊住話你不如佢",
+          "effects": [
+            {
+              "character": "媽媽",
+              "change": 5,
+              "comment": "媽媽話係激你先之嘛...但之後靜咗"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-h4-b",
+          "text": "話「我既方法同上網唔同啫」",
+          "effects": [
+            {
+              "character": "媽媽",
+              "change": 10,
+              "comment": "媽媽話傻豬，你都有好既地方"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-h5",
+      "title": "關卡： family group排除",
+      "location": "home",
+      "background": "家中・夜晚",
+      "description": "WhatsApp family group入面，大家傾trip既時候冇叫埋你...",
+      "hint": "屋企人都會忽略��� —— 但你可以表達感受",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-h5-a",
+          "text": "問「點解唔叫我」",
+          "effects": [
+            {
+              "character": "爸爸",
+              "change": 10,
+              "comment": "爸爸話以為你唔想去...下次一定叫埋你"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-b3",
+      "title": "關卡：唔小心整親人",
+      "location": "break",
+      "background": "走廊・晏晝",
+      "description": "你跑既時候唔小心撞跌咗小美，佢膝頭哥擦損埋...",
+      "hint": "做錯要認錯，勇氣既表現",
+      "characters": [
+        {
+          "name": "小美",
+          "emoji": "👩‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-b3-a",
+          "text": "即刻走",
+          "effects": [
+            {
+              "character": "小美",
+              "change": -30,
+              "comment": "小美喊住搵老師話你既衰嘢"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-b3-b",
+          "text": "話對唔住！你有冇事？",
+          "effects": [
+            {
+              "character": "小美",
+              "change": 15,
+              "comment": "你扶埋佢去醫療室，變咗英雄"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-b4",
+      "title": "關卡：排擠",
+      "location": "break",
+      "background": "操場・晏晝",
+      "description": "你想join既同學玩，但佢話：「你呢個人曳曳，我們唔想你join」",
+      "hint": "排擠都係欺凌既一種",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-b4-a",
+          "text": "自己一個玩",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 0,
+              "comment": "你自己一個，但發現原來一個都可以好好玩"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-b4-b",
+          "text": "搵第二班朋友",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 5,
+              "comment": "搵到新朋友，仲開心"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c3",
+      "title": "關卡：抄橋",
+      "location": "classroom",
+      "background": "課室・上堂",
+      "description": "考試既時候，你見到隔離同學想睇你既答案...",
+      "hint": "借功課比���抄 —— 害咗自己又害咗人",
+      "characters": [
+        {
+          "name": "小傑",
+          "emoji": "👨‍🎓",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-c3-a",
+          "text": "借比佢",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 5,
+              "comment": "但係之後你兩個都fail...老師話如果包庇都會照罰"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c3-b",
+          "text": "話「我，都想做啱既事」",
+          "effects": [
+            {
+              "character": "小傑",
+              "change": 10,
+              "comment": "小傑話sorry，我自己想辦法"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c4",
+      "title": "關卡：呃老師",
+      "location": "classroom",
+      "background": "課室・上堂",
+      "description": "功課冇做，你諗緊如果要呃老師話「唔記得帶」...",
+      "hint": "呃人既後果 —— 遲早拆穿",
+      "characters": [
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s-c4-a",
+          "text": "話冇做，sorry",
+          "effects": [
+            {
+              "character": "老師",
+              "change": 10,
+              "comment": "老師話有錯就改，下次做齊佢"
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c4-b",
+          "text": "呃話「唔記得帶」",
+          "effects": [
+            {
+              "character": "老師",
+              "change": -10,
+              "comment": "老師話下次唔好再，仲留堂...好羞恥"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "e1",
+      "min_relationship": 80,
+      "title": "🌟 友誼大師",
+      "description": "你好叻！你學識咗尊重朋友、用啱既方式表達感受、仲會安慰朋友！你既友誼一定會長長久久！"
+    },
+    {
+      "id": "e2",
+      "min_relationship": 50,
+      "title": "😊 成長中既你",
+      "description": "你已經學識啲基本既友誼技巧！繼續努力，你會做得更好既！"
+    },
+    {
+      "id": "e3",
+      "min_relationship": 0,
+      "title": "💪 繼續努力",
+      "description": "友誼係需要學習既。有時做得啱，有時做得錯，但係每一次都係學習既機會！"
+    },
+    {
+      "id": "e4",
+      "min_relationship": -999,
+      "title": "💔 要加油喎",
+      "description": "你有時會做錯選擇...但係呢個就係成長既一部分！下一次，你可以做得更好既！"
+    }
+  ]
+};
+    }
+    
+    // 讀取情景數據
+    function loadScenarios() {
+      // 直接使用內置數據，唔再 fetch
+      gameData = getDefaultScenarios();
+      totalScenarios = gameData.scenarios.length; // 動態計算總關卡數
+      buildCharacterCache();
+    }
+    
+    // Build character emoji cache for O(1) lookup
+    function buildCharacterCache() {
+      characterEmojiCache = {};
+      for (const scenario of gameData.scenarios) {
+        if (scenario.characters) {
+          for (const char of scenario.characters) {
+            characterEmojiCache[char.name] = char.emoji;
+          }
+        }
+      }
+    }
+
+    // 讀取關係值
+    function loadRelationships() {
+      const saved = localStorage.getItem('friendly-classroom-v2');
+      if (saved) {
+        relationships = JSON.parse(saved);
+      }
+    }
+
+    // 儲存關係值
+    function saveRelationships() {
+      localStorage.setItem('friendly-classroom-v2', JSON.stringify(relationships));
+    }
+
+    // Load/Save Game Stats
+    function loadGameStats() {
+      const saved = localStorage.getItem('friendly-classroom-stats');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // 兼容舊既存檔 + 新既欄位
+        gameStats = { ...gameStats, ...parsed };
+        if (!gameStats.skills) gameStats.skills = { empathy: 0, respect: 0, courage: 0, honesty: 0, kindness: 0, communication: 0 };
+        if (!gameStats.unlockedConcepts) gameStats.unlockedConcepts = [];
+      }
+    }
+
+    function saveGameStats() {
+      localStorage.setItem('friendly-classroom-stats', JSON.stringify(gameStats));
+    }
+
+    function updateSkillPoints(effects, scenarioId, optionIndex) {
+  // 智能 skill mapping - 根據 scenario 主題同選項 index 決定
+  // Option C (index=2) 通常係最佳選擇 -> 主要增加 skills
+  // Option A/B -> 較少或隨機
+  
+  const skillThemeMap = {
+    's1': 'respect',    // 嘲笑→尊重
+    's2': 'honesty',    // 匿贓→誠實
+    's3': 'empathy',   // 新朋友→同理心
+    's4': 'courage',  // 認錯→勇氣
+    's5': 'kindness', // 整蠱→善良
+    's6': 'communication', // 鬧交→溝通
+    's7': 'empathy',  // 安慰→同理心
+    's8': 'courage'  // 主動→勇氣
+  };
+
+  effects.forEach(effect => {
+    if (effect.change > 0) {
+      // 主要 skill 來自 scenario mapping
+      let skillId = skillThemeMap[scenarioId] || Object.keys(SKILLS)[scenarioId?.charCodeAt(1) % 6 || 0];
+      
+      // Option C (index=2) : +1 skill guaranteed
+      // Option B (index=1) : +0.4 chance
+      // Option A (index=0) : negative, no skill
+      
+      if (optionIndex === 2) {
+        // Best choice - guaranteed +1
+        if (gameStats.skills[skillId] < SKILLS[skillId].max) {
+          gameStats.skills[skillId]++;
+          checkConceptUnlock(skillId);
+          
+          // 即時 check badge - 技能 MAX 時立即頒發
+          checkBadgeImmediate(skillId);
+          
+          showParticles('positive');
+        }
+      } else if (optionIndex === 1 && Math.random() < 0.4) {
+        // Okay choice - 40% chance
+        if (gameStats.skills[skillId] < SKILLS[skillId].max) {
+          gameStats.skills[skillId]++;
+          if (Math.random() < 0.5) {
+            checkConceptUnlock(skillId);
+          }
+        }
+      }
+      // Option A: negative, no skill increase
+    }
+  });
+}
+
+    // 檢查概念卡解鎖
+    function checkConceptUnlock(skillId) {
+      if (!skillId) return;
+      const concept = CONCEPTS.find(c => c.skill === skillId && !gameStats.unlockedConcepts.includes(c.id));
+      if (concept && Math.random() < 0.4) { // 40% 解鎖機會 (increased from 15%)
+        gameStats.unlockedConcepts.push(concept.id);
+        showBadgeNotification({ name: concept.name + '概念', emoji: concept.emoji, desc: concept.desc });
+      }
+    }
+
+    // 遊戲結束時統一保存
+    function finalizeGame(avgRelationship, scenarioId) {
+      // 根據分數增加技能點 - 如果 avg > 50 即總體正面
+      if (avgRelationship > 50) {
+        const skillKeys = Object.keys(SKILLS);
+        const scenario = gameData.scenarios.find(s => s.id === scenarioId);
+        const primarySkill = scenarioId ? (skillKeys.find(k => k.startsWith(scenarioId?.charAt(1) || 'e')) : skillKeys[Math.floor(Math.random() * skillKeys.length)];
+        const finalSkill = primarySkill || skillKeys[Math.floor(Math.random() * skillKeys.length)];
+        
+        if (gameStats.skills[finalSkill] < SKILLS[finalSkill].max) {
+          gameStats.skills[finalSkill] = Math.min(gameStats.skills[finalSkill] + 1, SKILLS[finalSkill].max);
+          checkConceptUnlock(finalSkill);
+        }
+      }
+      saveGameStats();
+    }
+
+    // 顯示技能進度條
+    function showSkillProgress() {
+      return `
+        <div class="skill-progress">
+          ${Object.values(SKILLS).map(s => {
+            const level = gameStats.skills[s.id] || 0;
+            const isMaxed = level >= s.max;
+            const isUnlocked = level > 0;
+            let cls = 'skill-item';
+            if (isMaxed) cls += ' maxed';
+            else if (isUnlocked) cls += ' unlocked';
+            return `
+              <div class="${cls}">
+                <span class="skill-emoji">${isUnlocked ? s.emoji : '❓'}</span>
+                <span class="skill-name">${s.name}</span>
+                <span class="skill-level">${level}/${s.max}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // 顯示概念卡牌
+    function showConceptCards() {
+      if (gameStats.unlockedConcepts.length === 0) return '';
+      const unlocked = CONCEPTS.filter(c => gameStats.unlockedConcepts.includes(c.id));
+      return `
+        <div class="concept-cards">
+          ${unlocked.map(c => `
+            <div class="concept-card unlocked">
+              <span class="card-emoji">${c.emoji}</span>
+              <span class="card-name">${c.name}</span>
+              <div class="card-tooltip">${c.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 粒子效果
+    function showParticles(type) {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      const container = document.createElement('div');
+      container.className = 'particles-container';
+      document.body.appendChild(container);
+      
+      const emojis = type === 'positive' ? ['✨','⭐','💫','🌟'] : ['💔','🌧️','❄️'];
+      const colors = type === 'positive' ? ['#ffd93f','#4caf50','#e87830'] : ['#e83838','#6b4f3a'];
+      
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        particle.style.left = (20 + Math.random() * 60) + '%';
+        particle.style.top = (20 + Math.random() * 60) + '%';
+        particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+        particle.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+        container.appendChild(particle);
+      }
+      
+      setTimeout(() => container.remove(), 1000);
+    }
+
+    // 螢幕震動
+    function triggerShake() {
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      document.body.classList.add('shake');
+      setTimeout(() => document.body.classList.remove('shake'), 300);
+    }
+
+    // Check and award badges
+    function checkBadges() {
+      const newBadges = [];
+      for (const badge of BADGES) {
+        if (!gameStats.badges.includes(badge.id) && badge.condition(gameStats)) {
+          gameStats.badges.push(badge.id);
+          newBadges.push(badge);
+        }
+      }
+      return newBadges;
+    }
+    
+    // 即時頒發 badge - 技能 MAX 時立即彈出通知
+    function checkBadgeImmediate(skillId) {
+      // 搵呢個 skill 對應既 badge
+      const skillBadgeMap = {
+        empathy: 'empathy_master',
+        respect: 'respect_master',
+        courage: 'courage_master',
+        honesty: 'honesty_master',
+        kindness: 'kindness_master',
+        communication: 'communication_master'
+      };
+      
+      const badgeId = skillBadgeMap[skillId];
+      if (!badgeId) return;
+      
+      // Check if skill reached MAX and badge not yet awarded
+      if ((gameStats.skills[skillId] || 0) >= 5 && !gameStats.badges.includes(badgeId)) {
+        const badge = BADGES.find(b => b.id === badgeId);
+        if (badge) {
+          gameStats.badges.push(badgeId);
+          saveGameStats(); // 立即 save
+          showBadgeNotification(badge); // 即時彈出
+        }
+      }
+    }
+
+    // Show badge notification
+    function showBadgeNotification(badge) {
+      AudioSys.badge(); // Play badge sound
+      
+      const gameArea = document.getElementById('game-area');
+      const existing = document.querySelector('.badge-notification');
+      if (existing) existing.remove();
+
+      const notif = document.createElement('div');
+      notif.className = 'badge-notification';
+      notif.innerHTML = `
+        <div style="position:fixed;top:20px;right:20px;background:var(--green);padding:15px 25px;border-radius:10px;
+             color:white;font-size:18px;z-index:200;animation:slideIn 0.5s ease;">
+          🎖️ 獲得徽章: ${badge.emoji} ${badge.name}!
+        </div>
+      `;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    }
+
+    // Add slideIn animation
+    const style = document.createElement('style');
+    style.textContent = '@keyframes slideIn { from { transform:translateX(100px);opacity:0; } to { transform:translateX(0);opacity:1; } }';
+    document.head.appendChild(style);
+
+    // 開始遊戲
+    function startGame(location) {
+      console.log('[DEBUG] startGame called with location:', location);
+      location = location || 'random';
+      
+      // Capture player name at game start
+      getPlayerName();
+      
+      try {
+        // 清除開始畫面
+        const startScreen = document.getElementById('start-screen');
+        if (startScreen) startScreen.remove();
+        
+        // 确保 gameData 已加载
+        if (!gameData.scenarios || gameData.scenarios.length === 0) {
+          console.log('[DEBUG] Loading scenarios...');
+          loadScenarios();
+        }
+        
+        // 根據 location 篩選場景
+        let filteredScenarios = gameData.scenarios;
+        if (location && location !== 'random') {
+          filteredScenarios = gameData.scenarios.filter(s => s.location === location);
+          if (filteredScenarios.length === 0) {
+            // 如果冇呢個 location 既場景就用全部
+            filteredScenarios = gameData.scenarios;
+          }
+        }
+        
+        // 隨機打亂場景順序
+        if (location === 'random') {
+          filteredScenarios = [...filteredScenarios].sort(() => Math.random() - 0.5);
+        }
+        
+        const firstScenario = filteredScenarios[0];
+        if (firstScenario && firstScenario.characters) {
+          firstScenario.characters.forEach(char => {
+            if (relationships[char.name] === undefined) {
+              relationships[char.name] = char.initial_relationship;
+            }
+          });
+        }
+        
+        // 显示关系值和第一个场景
+        showRelationships();
+        showScenario(firstScenario);
+        
+        console.log('[DEBUG] Game started successfully');
+      } catch (e) {
+        console.error('[ERROR] startGame:', e);
+        alert('Error: ' + e.message);
+      }
+    }
+    
+    // Expose functions to window for onclick handlers
+    window.startGame = startGame;
+    window.chooseOption = chooseOption;
+    window.speakText = function(e) { speakText(e); };
+    window.showHint = function(e) { showHint(e); };
+    window.toggleSettings = toggleSettings;
+    window.toggleAdmin = toggleAdmin;
+    window.updateFontSize = updateFontSize;
+    window.updateSpeed = updateSpeed;
+    window.toggleSound = toggleSound;
+    window.saveScenarios = saveScenarios;
+    window.showGuidanceTip = showGuidanceTip;
+    window.finishFeedback = finishFeedback;
+    window.retryChoice = retryChoice;
+    window.restartGame = restartGame;
+
+    // 顯示關係值
+    function showRelationships() {
+      const container = document.getElementById('relationships');
+      const chars = Object.keys(relationships);
+      
+      if (chars.length === 0) {
+        container.innerHTML = '<p style="color:var(--cream);font-size:14px;">Loading...</p>';
+        return;
+      }
+
+      container.innerHTML = chars.map(name => {
+        const value = Math.max(0, Math.min(100, relationships[name]));
+        const emoji = getCharacterEmoji(name);
+        let barClass = 'high';
+        if (value < 30) barClass = 'low';
+        else if (value < 60) barClass = 'medium';
+        
+        return `
+          <div class="char-card">
+            <div class="char-emoji">${emoji}</div>
+            <div class="char-name">${name}</div>
+            <div class="char-bar-container">
+              <div class="char-bar-fill ${barClass}" style="width: ${value}%"></div>
+            </div>
+            <div class="char-value">${value}%</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 獲取角色emoji - O(1) from cache
+    function getCharacterEmoji(name) {
+      return characterEmojiCache[name] || '👤';
+    }
+
+    // 顯示情景 - SceneCard 版本
+    function showScenario(scenario) {
+      if (!scenario) {
+        checkEnding();
+        return;
+      }
+      
+      // Skip if already completed
+      if (completedScenarios.includes(scenario.id)) {
+        const nextId = scenario.options[0]?.next_scenario;
+        const next = gameData.scenarios.find(s => s.id === nextId);
+        if (next) { showScenario(next); return; }
+      }
+      
+      currentScenario = scenario;
+      currentScenarioNum = (currentScenarioNum || 0) + 1;
+      
+      const gameArea = document.getElementById('game-area');
+
+      // 收集情景中的角色
+      const chars = scenario.characters || [];
+      const charHTML = chars.map(c => `
+        <div class="character-avatar" id="char-${c.name}">
+          <Emoji>${c.emoji}</Emoji>
+          <div class="character-label">${c.name}</div>
+        </div>
+      `).join('');
+
+      gameArea.innerHTML = `
+        <div class="scenario-card">
+          <!-- Progress Bar -->
+          <div class="progress-container">
+            <div class="progress-label">關卡進度：${currentScenarioNum}/${totalScenarios}</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${(currentScenarioNum/totalScenarios)*100}%"></div>
+            </div>
+          </div>
+          
+          <div class="scene-background">🖼️ ${scenario.background || scenario.title}</div>
+          
+          <div class="character-stage">
+            ${charHTML}
+          </div>
+          
+          ${chars.length > 0 ? `
+            <div class="dialogue-bubble from-npc">
+              ${scenario.description}
+            </div>
+          ` : `
+            <div class="scenario-desc" id="scenario-text">${scenario.description}</div>
+          `}
+          
+          <div class="question-tools">
+            <button class="tool-btn" onclick="speakText(event)">🔊 讀一次</button>
+            <button class="tool-btn" onclick="showHint(event)">💡 提示</button>
+          </div>
+          
+          <div class="hint-box" id="hint-box">
+            ${scenario.hint || '試下諗下，如果係你，你會點樣做？'}
+          </div>
+          
+          <div class="options">
+            ${scenario.options.map((opt, i) => `
+              <button class="option-btn" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
+                <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
+              </button>
+            `).join('')}
+          </div>
+
+          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+        </div>
+      `;
+    }
+    
+    // 角色說話動畫
+    function animateCharacterSpeak(charName, isSpeaking) {
+      const charEl = document.getElementById(`char-${charName}`);
+      if (charEl) {
+        if (isSpeaking) {
+          charEl.classList.add('speaking');
+        } else {
+          charEl.classList.remove('speaking');
+        }
+      }
+    }
+    
+    // TTS - 讀出情景文字
+    function speakText(e) {
+      const text = document.getElementById('scenario-text')?.innerText;
+      if (!text) return;
+      
+      if (!settings.soundEnabled) return;
+      
+      const btn = e?.target;
+      if (btn) btn.classList.add('speaking');
+      
+      // 使用 Web Speech API
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-HK';
+        utterance.rate = settings.speechRate;
+        utterance.pitch = 1;
+        
+        utterance.onend = () => btn.classList.remove('speaking');
+        speechSynthesis.speak(utterance);
+      }
+    }
+    
+    // 設定 functions
+    function toggleSettings() {
+      document.getElementById('settings-panel').classList.toggle('open');
+    }
+    
+    function updateFontSize(size) {
+      settings.fontSize = parseInt(size);
+      document.getElementById('fontDisplay').innerText = size + 'px';
+      
+      // 更新所有文字大小
+      const elements = document.querySelectorAll('.scenario-desc, .dialogue-bubble, .option-btn, .hint-box, .result-comment');
+      elements.forEach(el => {
+        el.style.fontSize = size + 'px';
+      });
+      
+      saveSettings();
+    }
+    
+    function updateSpeed(speed) {
+      settings.speechRate = parseFloat(speed);
+      document.getElementById('speedDisplay').innerText = speed + 'x';
+      saveSettings();
+    }
+    
+    function toggleSound(enabled) {
+      settings.soundEnabled = enabled;
+      document.getElementById('soundStatus').innerText = enabled ? '開' : '關';
+      saveSettings();
+    }
+    
+    // 顯示提示
+    function showHint(e) {
+      const hintBox = document.getElementById('hint-box');
+      if (hintBox) {
+        hintBox.classList.toggle('show');
+      }
+    }
+
+// 選擇選項
+    function chooseOption(scenarioId, optionId) {
+      const scenario = gameData.scenarios.find(s => s.id === scenarioId);
+      if (!scenario) return;
+
+      const option = scenario.options.find(o => o.id === optionId);
+      if (!option) return;
+      
+      // Get option index for skill calculation
+      const optionIndex = scenario.options.findIndex(o => o.id === optionId);
+
+      // Play click sound
+      AudioSys.click();
+
+      // 保存選擇前既關係值（用于重試）
+      previousRelationships = JSON.parse(JSON.stringify(relationships));
+
+      // 應用效果
+      const totalChange = option.effects.reduce((sum, e) => sum + e.change, 0);
+      option.effects.forEach(effect => {
+        relationships[effect.character] = (relationships[effect.character] || 50) + effect.change;
+        relationships[effect.character] = Math.max(-100, Math.min(100, relationships[effect.character]));
+      });
+      
+      // 更新技能點數 - passing scenarioId 同 optionIndex
+      updateSkillPoints(option.effects, scenarioId, optionIndex);
+      
+      // 視覺效果：正向=粒子+綠光閃爍 / 負向=震動+紅閃爍
+      const gameArea = document.getElementById('game-area');
+      if (totalChange > 0) {
+        showParticles('positive');
+        gameArea.classList.add('positive-flash');
+        setTimeout(() => gameArea.classList.remove('positive-flash'), 500);
+      } else if (totalChange < 0) {
+        triggerShake();
+        gameArea.classList.add('negative-flash');
+        setTimeout(() => gameArea.classList.remove('negative-flash'), 400);
+      }
+      
+      // Mark as completed
+      if (!completedScenarios.includes(scenarioId)) {
+        completedScenarios.push(scenarioId);
+      }
+
+      saveRelationships();
+      showRelationships();
+
+      showResult(option.effects, () => {
+        const nextId = option.next_scenario;
+        const nextScenario = nextId ? gameData.scenarios.find(s => s.id === nextId) : null;
+
+        if (nextScenario) {
+          nextScenario.characters.forEach(char => {
+            if (relationships[char.name] === undefined) {
+              relationships[char.name] = char.initial_relationship;
+            }
+          });
+          showScenario(nextScenario);
+        } else {
+          checkEnding();
+        }
+      });
+    }
+
+// 顯示結果 - FeedbackModal 兩階段顯示
+    function showResult(effects, onContinue) {
+      const gameArea = document.getElementById('game-area');
+
+      //.Play success/fail sound based on effect
+      const totalChange = effects.reduce((sum, e) => sum + e.change, 0);
+      if (totalChange > 0) AudioSys.success();
+      else if (totalChange < 0) AudioSys.fail();
+
+      // 第一階段：後果敘述
+      const comments = effects.map(e => {
+        const emoji = getCharacterEmoji(e.character);
+        const change = e.change;
+        const changeText = change > 0 ? `+${change}` : change;
+        return `<strong>${emoji} ${e.character}:</strong> ${e.comment} <span class="change-amount">(${changeText}❤️)</span>`;
+      }).join('<br><br>');
+      
+      gameArea.innerHTML = `
+        <div class="result-overlay show">
+          <div class="result-card feedback-modal">
+            <div class="feedback-stage stage-consequence">
+              <div class="feedback-title">📢 發生咩事？</div>
+              <div class="result-comment">${comments}</div>
+              <button class="continue-btn" onclick="showGuidanceTip(this)">睇下點樣做得更好 💡</button>
+            </div>
+            
+            <div class="feedback-stage stage-guidance" style="display:none;">
+              <div class="feedback-title">💡 俾啲提示你</div>
+              <div class="guidance-tip">
+                記住呀，每個人都應該被尊重同關心～
+                <br>如果見到有人唔開心，可以問下佢發生咩事！
+              </div>
+              <button class="continue-btn blink" onclick="finishFeedback(this)">繼續 ▶</button>
+            </div>
+            
+            <button class="retry-btn" onclick="retryChoice()">🔄 我想再想想</button>
+          </div>
+        </div>
+      `;
+      
+// 綁定回調函數
+      currentOnContinue = onContinue;
+    }
+
+    // 顯示引導提示（第二階段）
+    function showGuidanceTip(btn) {
+      const card = btn.closest('.result-card');
+      card.querySelector('.stage-consequence').style.display = 'none';
+      card.querySelector('.stage-guidance').style.display = 'block';
+    }
+
+    // 完成Feedback，進入下一個情景
+    function finishFeedback(btn) {
+      btn.closest('.result-overlay').remove();
+      currentOnContinue?.();
+    }
+
+    // 重試（返回選擇）
+    function retryChoice() {
+      // 恢復關係值到選擇前
+      if (previousRelationships) {
+        relationships = JSON.parse(JSON.stringify(previousRelationships));
+        saveRelationships();
+        showRelationships();
+        // 移除彈窗
+        document.querySelector('.result-overlay')?.remove();
+        // 重新顯示當前情景
+        showScenario(currentScenario);
+      } else {
+        // 如果冇 previousRelationships，直接 close modal 同 reload scenario
+        document.querySelector('.result-overlay')?.remove();
+        if (currentScenario) showScenario(currentScenario);
+      }
+    }
+
+    // 檢查結局
+    function checkEnding() {
+      console.log('[DEBUG] checkEnding called');
+      console.log('[DEBUG] relationships:', relationships);
+      console.log('[DEBUG] gameData.endings:', gameData.endings);
+      
+      const keys = Object.keys(relationships);
+      if (keys.length === 0) {
+        showDefaultEnding();
+        return;
+      }
+      
+      const avgRelationship = Object.values(relationships).reduce((a, b) => a + b, 0) / keys.length;
+      console.log('[DEBUG] avgRelationship:', avgRelationship);
+
+      // 搵岩既ending
+      const validEndings = gameData.endings.filter(e => avgRelationship >= e.min_relationship);
+      console.log('[DEBUG] validEndings:', validEndings);
+      
+      if (validEndings.length > 0) {
+        // 搵最高min_relationship既
+        validEndings.sort((a, b) => b.min_relationship - a.min_relationship);
+        showEnding(validEndings[0]);
+      } else {
+        showDefaultEnding();
+      }
+    }
+    
+    // 顯示預設結局（如果冇既話）
+    function showDefaultEnding() {
+      const avgRelationship = Object.values(relationships).reduce((a, b) => a + b, 0) / Object.keys(relationships).length;
+      const gameArea = document.getElementById('game-area');
+      const playerName = getPlayerName();
+      const today = new Date().toLocaleDateString('zh-HK');
+      
+      // Determine medal rank
+      let rank = 'bronze', rankEmoji = '🥉', rankTitle = '銅牌';
+      if (avgRelationship >= 80) { rank = 'gold'; rankEmoji = '🏆'; rankTitle = '金牌'; }
+      else if (avgRelationship >= 60) { rank = 'silver'; rankEmoji = '🥈'; rankTitle = '銀牌'; }
+      
+      // Update stats
+      AudioSys.complete();
+      gameStats.gamesPlayed++;
+      gameStats.totalScore += avgRelationship;
+      if (avgRelationship > gameStats.bestScore) gameStats.bestScore = avgRelationship;
+      if (avgRelationship >= 50) {
+        gameStats.currentStreak++;
+        if (gameStats.currentStreak > gameStats.bestStreak) gameStats.bestStreak = gameStats.currentStreak;
+      } else {
+        gameStats.currentStreak = 0;
+      }
+
+      // 更新技能 - 使用 currentScenario.id
+      const skillKeys = Object.keys(SKILLS);
+      const primarySkill = skillKeys[Math.floor(Math.random() * skillKeys.length)];
+      if (avgRelationship > 50 && gameStats.skills[primarySkill] < SKILLS[primarySkill].max) {
+        gameStats.skills[primarySkill] = Math.min(gameStats.skills[primarySkill] + 1, SKILLS[primarySkill].max);
+      }
+      finalizeGame(avgRelationship, currentScenario?.id);
+      
+      // Generate learning points based on relationships
+      let learningPoints = [];
+      for (const [name, value] of Object.entries(relationships)) {
+        if (value >= 70) {
+          learningPoints.push(`✨ 你同 ${name} 建立咗非常好既友誼！记住要珍惜呢段關係。`);
+        } else if (value >= 40) {
+          learningPoints.push(`💪 你同 ${name} 既關係幾好，繼續努力關心佢！`);
+        } else if (value >= 0) {
+          learningPoints.push(`💭 你同 ${name} 既關係有待改進，試下多啲了解佢既感受。`);
+        } else {
+          learningPoints.push(`💔 你同 ${name} 既關係受損咗，記住語言同行為都會傷害人。要修復先既關係，需要時間同真心。`);
+        }
+      }
+      
+      gameArea.innerHTML = `
+        <div class="ending-card">
+          <!-- Certificate -->
+          <div class="cert ${rank}" style="margin-bottom:30px;">
+            <div class="cert-title">🎓 友誼教室證書</div>
+            <div class="cert-rank">${rankEmoji} ${rankTitle}</div>
+            <div class="cert-name">${playerName}</div>
+            <div style="color:var(--cream);font-size:14px;">成功完成「友誼大冒險」</div>
+            <div class="cert-stats">
+              <p>平均好感度：<strong style="color:var(--yellow);">${Math.round(avgRelationship)}</strong></p>
+              <p>總遊戲次數：${gameStats.gamesPlayed} | 最佳連續：${gameStats.bestStreak}</p>
+            </div>
+            <div class="cert-date">頒發日期：${today}</div>
+          </div>
+          
+          <!-- 技能進度 -->
+          <div style="margin:20px 0;">
+            <p style="color:var(--cream);font-size:14px;">📊 技能進度：</p>
+            ${showSkillProgress()}
+          </div>
+          
+          <!-- 解鎖既概念卡 -->
+          ${showConceptCards()}
+          
+          <div class="ending-title">🏆 遊戲完成！</div>
+          <div class="ending-desc">你已完成所有關卡！</div>
+          <div style="margin:20px 0;color:var(--cream);font-size:16px;">
+            <p>平均好感度：<strong>${Math.round(avgRelationship)}</strong></p>
+          </div>
+          <div style="margin:20px 0;">
+            <p style="color:var(--cream);font-size:14px;">同學好感度：</p>
+            ${Object.entries(relationships).map(([name, value]) => 
+              `<p style="color:var(--yellow);font-size:14px;">${name}: ${value}</p>`
+            ).join('')}
+          </div>
+          <div class="learning-points">
+            <p style="color:var(--cream);font-size:14px;margin-top:20px;">📚 學習要點：</p>
+            ${learningPoints.map(p => `<p style="color:var(--yellow);font-size:13px;margin:10px 0;">${p}</p>`).join('')}
+          </div>
+          <button class="restart-btn" onclick="restartGame()">🔄 重新開始</button>
+          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+        </div>
+      `;
+    }
+
+// 顯示結局
+    function showEnding(ending) {
+      const avgRelationship = Object.values(relationships).reduce((a, b) => a + b, 0) / Object.keys(relationships).length;
+      const gameArea = document.getElementById('game-area');
+      const playerName = getPlayerName();
+      const today = new Date().toLocaleDateString('zh-HK');
+      
+      // Determine medal rank
+      let rank = 'bronze', rankEmoji = '🥉', rankTitle = '銅牌';
+      if (avgRelationship >= 80) { rank = 'gold'; rankEmoji = '🏆'; rankTitle = '金牌'; }
+      else if (avgRelationship >= 60) { rank = 'silver'; rankEmoji = '🥈'; rankTitle = '銀牌'; }
+      
+      // Update gamification stats
+      AudioSys.complete(); // Play victory sound
+      
+      gameStats.gamesPlayed++;
+      gameStats.totalScore += avgRelationship;
+      if (avgRelationship > gameStats.bestScore) gameStats.bestScore = avgRelationship;
+      
+      // Check streak (if positive score, increment streak; else reset)
+      if (avgRelationship >= 50) {
+        gameStats.currentStreak++;
+        if (gameStats.currentStreak > gameStats.bestStreak) gameStats.bestStreak = gameStats.currentStreak;
+      } else {
+        gameStats.currentStreak = 0;
+      }
+// Check for perfect game (all positive)
+      const allPositive = Object.values(relationships).every(v => v > 0);
+      if (allPositive) gameStats.perfectGames++;
+
+      // 更新技能 - 使用 currentScenario.id
+      const skillKeys = Object.keys(SKILLS);
+      const primarySkill = skillKeys[Math.floor(Math.random() * skillKeys.length)];
+      if (avgRelationship > 50 && gameStats.skills[primarySkill] < SKILLS[primarySkill].max) {
+        gameStats.skills[primarySkill] = Math.min(gameStats.skills[primarySkill] + 1, SKILLS[primarySkill].max);
+      }
+      finalizeGame(avgRelationship, currentScenario?.id);
+      
+      // Check and award badges
+      const newBadges = checkBadges();
+      newBadges.forEach(badge => showBadgeNotification(badge));
+
+      // Generate learning points
+      let learningPoints = [];
+      for (const [name, value] of Object.entries(relationships)) {
+        if (value >= 70) {
+          learningPoints.push(`✨ 你同 ${name} 建立咗非常好既友誼！记住要珍惜呢段關係。`);
+        } else if (value >= 40) {
+          learningPoints.push(`💪 你同 ${name} 既關係幾好，繼續努力關心佢！`);
+        } else if (value >= 0) {
+          learningPoints.push(`💭 你同 ${name} 既關係有待改進，試下多啲了解佢既感受。`);
+        } else {
+          learningPoints.push(`💔 你同 ${name} 既關係受損咗，記住語言同行為都會傷害人。要修復先既關係，需要時間同真心。`);
+        }
+      }
+      
+      // Build certificate HTML
+      // 分支結局：根據技能組合顯示獨特結局
+      const skillProfile = Object.entries(gameStats.skills).sort((a,b) => b[1]-a[1]);
+      const topSkill = skillProfile[0][1] > 0 ? SKILLS[skillProfile[0][0]] : null;
+      const endingVariant = topSkill ? {
+        empathy: '你已經學識咗用同理心去理解每個人既感受，真係難得！',
+        respect: '你既尊重贏得咗大家既信任！',
+        courage: '你既勇氣令到你敢於維護啱既嘢！',
+        honesty: '你既誠實令到你值得被信任！',
+        kindness: '你既善良温暖咗身邊既人！',
+        communication: '你已經學識好好表達自己既感受！'
+      }[topSkill.id] || ending.description : ending.description;
+      
+      gameArea.innerHTML = `
+        <div class="ending-card">
+          <!-- Certificate -->
+          <div class="cert ${rank}" style="margin-bottom:30px;">
+            <div class="cert-title">🎓 友誼教室證書</div>
+            <div class="cert-rank">${rankEmoji} ${rankTitle}</div>
+            <div class="cert-name">${playerName}</div>
+            <div style="color:var(--cream);font-size:14px;">成功完成「友誼大冒險」</div>
+            <div class="cert-stats">
+              <p>平均好感度：<strong style="color:var(--yellow);">${Math.round(avgRelationship)}</strong></p>
+              <p>總遊戲次數：${gameStats.gamesPlayed} | 最佳連續：${gameStats.bestStreak}</p>
+            </div>
+            <div class="cert-date">頒發日期：${today}</div>
+          </div>
+          
+          <!-- 技能進度 -->
+          <div style="margin:20px 0;">
+            <p style="color:var(--cream);font-size:14px;">📊 技能進度：</p>
+            ${showSkillProgress()}
+          </div>
+          
+          <!-- 解鎖既概念卡 -->
+          ${showConceptCards()}
+          
+          <div style="margin:20px 0;color:var(--cream);font-size:16px;">
+            <p>${ending.title}</p>
+            <p>${endingVariant}</p>
+          </div>
+          </div>
+          <!-- Badges Display -->
+          <div style="margin:15px 0;">
+            <p style="color:var(--cream);font-size:14px;">🎖️ 徽章：</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+              ${BADGES.filter(b => gameStats.badges.includes(b.id)).map(b => 
+                `<span style="font-size:28px;" title="${b.name}: ${b.desc}">${b.emoji}</span>`
+              ).join('')}
+              ${gameStats.badges.length === 0 ? '<span style="color:var(--bg-light);font-size:12px;">未有任何徽章</span>' : ''}
+            </div>
+          </div>
+          <!-- Stats -->
+          <div style="margin:15px 0;font-size:12px;color:var(--bg-light);">
+            <p>總遊戲次數：${gameStats.gamesPlayed} | 最佳連續：${gameStats.bestStreak} | 完美次數：${gameStats.perfectGames}</p>
+          </div>
+          <div style="margin:20px 0;">
+            <p style="color:var(--cream);font-size:14px;">同學好感度：</p>
+            ${Object.entries(relationships).map(([name, value]) => 
+              `<p style="color:var(--yellow);font-size:14px;">${name}: ${value}</p>`
+            ).join('')}
+          </div>
+          <div class="learning-points">
+            <p style="color:var(--cream);font-size:14px;margin-top:20px;">📚 學習要點：</p>
+            ${learningPoints.map(p => `<p style="color:var(--yellow);font-size:13px;margin:10px 0;">${p}</p>`).join('')}
+          </div>
+          <button class="restart-btn" onclick="restartGame()">🔄 重新開始</button>
+          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+        </div>
+      `;
+    }
+
+    // 重新開始
+    function restartGame() {
+      relationships = {};
+      completedScenarios = [];
+      currentScenarioNum = 0;
+      saveRelationships();
+      document.getElementById('game-area').innerHTML = '';
+      startGame();
+    }
+
+    // 回首頁
+    function resetGame() {
+      relationships = {};
+      saveRelationships();
+      location.reload();
+    }
+
+    // Admin
+    function toggleAdmin() {
+      const panel = document.getElementById('admin-panel');
+      const editor = document.getElementById('json-editor');
+      
+      if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+      } else {
+        editor.value = JSON.stringify(gameData, null, 2);
+        panel.classList.add('show');
+      }
+    }
+
+    function saveScenarios() {
+      try {
+        const editor = document.getElementById('json-editor');
+        gameData = JSON.parse(editor.value);
+        localStorage.setItem('friendly-classroom-v2-scenarios', JSON.stringify(gameData));
+        alert('✅ 已儲存！');
+        toggleAdmin();
+        restartGame();
+      } catch (e) {
+        alert('❌ JSON 錯誤: ' + e.message);
+      }
+    }
+
+    // 啟動
+    window.onload = init;
+  </script>
+</body>
+</html>
