@@ -2409,7 +2409,7 @@
       if (avgRelationship > 50) {
         const skillKeys = Object.keys(SKILLS);
         const scenario = gameData.scenarios.find(s => s.id === scenarioId);
-        const primarySkill = scenarioId ? (skillKeys.find(k => k.startsWith(scenarioId?.charAt(1) || 'e')) : skillKeys[Math.floor(Math.random() * skillKeys.length)];
+        const primarySkill = scenarioId ? (skillKeys.find(k => k.startsWith(scenarioId?.charAt(1) || 'e'))) : skillKeys[Math.floor(Math.random() * skillKeys.length)];
         const finalSkill = primarySkill || skillKeys[Math.floor(Math.random() * skillKeys.length)];
         
         if (gameStats.skills[finalSkill] < SKILLS[finalSkill].max) {
@@ -2687,7 +2687,7 @@
       const chars = scenario.characters || [];
       const charHTML = chars.map(c => `
         <div class="character-avatar" id="char-${c.name}">
-          <Emoji>${c.emoji}</Emoji>
+          <span class="char-emoji">${c.emoji}</span>
           <div class="character-label">${c.name}</div>
         </div>
       `).join('');
