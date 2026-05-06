@@ -2750,60 +2750,50 @@
       }
     }
     
-    // TTS - 讀出情景文字
+// TTS - 讀出情景文字
     function speakText(e) {
-      // 首先尝试从 dialogue-bubble 获取文本（角色对话）
-      let text = document.querySelector('.dialogue-bubble')?.innerText;
-      // 然后尝试从 scenario-text 获取
-      if (!text) text = document.getElementById('scenario-text')?.innerText;
-      // 最后从 scenario-desc 获取
-      if (!text) text = document.querySelector('.scenario-desc')?.innerText;
-      if (!text) return;
+      // Skip if already speaking
+      if (window.__ttsSpeaking) return;
+      window.__ttsSpeaking = true;
       
-      if (!settings.soundEnabled) return;
-      
-      const btn = e?.target;
-      if (btn) btn.classList.add('speaking');
-      
-      // 使用 Web Speech API
-      if ('speechSynthesis' in window) {
-        // 先取消之前既 speech
-        speechSynthesis.cancel();
+      try {
+        // 从 div 直接获取 textContent (避免 innerText 既递归问题)
+        const bubble = document.querySelector('.dialogue-bubble');
+        const textEl = document.getElementById('scenario-text');
+        const descEl = document.querySelector('.scenario-desc');
         
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'zh-HK';
-        utterance.rate = settings.speechRate || 0.9;
-        utterance.pitch = 1;
+        const text = (bubble?.textContent || textEl?.textContent || descEl?.textContent || '').trim();
+        if (!text) return;
         
-        // 搵廣東話 voice - voices 可能需要异步加载
-        const getVoice = () => {
-          const voices = speechSynthesis.getVoices();
-          // 优先搵粵語/香港 voice
-          let hkVoice = voices.find(v => v.lang.includes('HK') || v.lang.includes(' canton') || v.lang.includes('yue'));
-          if (!hkVoice) hkVoice = voices.find(v => v.lang.startsWith('zh') && (v.lang.includes('HK') || v.lang.includes('yue')));
-          if (!hkVoice) hkVoice = voices.find(v => v.lang.startsWith('zh'));
-          if (hkVoice) utterance.voice = hkVoice;
-        };
+        if (!settings.soundEnabled) return;
         
-        // 如果 voices 未加载，等一等
-        if (speechSynthesis.getVoices().length > 0) {
-          getVoice();
-        } else {
-          speechSynthesis.addEventListener('voiceschanged', getVoice, { once: true });
+        const btn = e?.target;
+        if (btn) btn.classList.add('speaking');
+        
+        // 使用 Web Speech API
+        if ('speechSynthesis' in window) {
+          // 先取消之前既 speech
+          speechSynthesis.cancel();
+          
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'zh-HK';
+          utterance.rate = settings.speechRate || 0.9;
+          utterance.pitch = 1;
+          
+          utterance.onend = () => { 
+            window.__ttsSpeaking = false;
+            btn?.classList.remove('speaking'); 
+          };
+          utterance.onerror = (e) => { 
+            console.log('TTS error:', e);
+            window.__ttsSpeaking = false;
+            btn?.classList.remove('speaking'); 
+          };
+          speechSynthesis.speak(utterance);
         }
-        
-        utterance.onend = () => btn?.classList.remove('speaking');
-        utterance.onerror = (e) => { 
-          console.log('TTS error:', e);
-          btn?.classList.remove('speaking'); 
-        };
-        speechSynthesis.speak(utterance);
-        
-        // 如果 speechSynthesis 处于 pending 状态，等待
-        if (speechSynthesis.state === 'pending') {
-          speechSynthesis.pause();
-          speechSynthesis.resume();
-        }
+      } catch(err) {
+        console.error('speakText error:', err);
+        window.__ttsSpeaking = false;
       }
     }
     
@@ -2839,9 +2829,18 @@
     
     // 顯示提示
     function showHint(e) {
-      const hintBox = document.getElementById('hint-box');
-      if (hintBox) {
-        hintBox.classList.toggle('show');
+      if (window.__hintShowing) return;
+      window.__hintShowing = true;
+      
+      try {
+        const hintBox = document.getElementById('hint-box');
+        if (hintBox) {
+          hintBox.classList.toggle('show');
+        }
+        
+        setTimeout(() => { window.__hintShowing = false; }, 300);
+      } catch(err) {
+        window.__hintShowing = false;
       }
     }
 
