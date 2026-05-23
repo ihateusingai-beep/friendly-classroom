@@ -295,6 +295,8 @@
       color: var(--yellow);
       margin-bottom: 20px;
     }
+    .feedback-title.title-positive { color: #4ade80; text-shadow: 2px 2px 0 #166534; }
+    .feedback-title.title-negative { color: #f87171; text-shadow: 2px 2px 0 #991b1b; }
 
     .change-amount {
       font-family: 'Press Start 2P', monospace;
@@ -364,24 +366,117 @@
       50% { transform: scale(1.05); }
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== 3-Tier ARPG Hint System ========== */
+    .hint-container {
+      margin-top: 15px;
+      position: relative;
+    }
+
+    .hint-tiers {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      justify-content: flex-end;
+    }
+
+    .hint-tier-btn {
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 2px solid;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .hint-tier-btn.tier-1 {
+      background: rgba(100, 181, 246, 0.15);
+      border-color: #64B5F6;
+      color: #64B5F6;
+    }
+
+    .hint-tier-btn.tier-2 {
+      background: rgba(255, 213, 79, 0.15);
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .hint-tier-btn.tier-3 {
+      background: rgba(239, 83, 80, 0.15);
+      border-color: #EF5350;
+      color: #EF5350;
+    }
+
+    .hint-tier-btn.active {
+      transform: scale(1.1);
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .hint-tier-btn.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
     .hint-box {
       background: rgba(255, 217, 63, 0.1);
       border: 2px dashed var(--yellow);
       padding: 15px;
-      margin-top: 15px;
+      margin-top: 0;
       font-size: 18px;
       color: var(--yellow);
       display: none;
     }
 
-    .hint-box.show {
-      display: block;
-      animation: fadeIn 0.3s;
+    .hint-box.tier-1 {
+      background: rgba(100, 181, 246, 0.08);
+      border-color: #64B5F6;
+      border-style: dotted;
+      color: #64B5F6;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .hint-box.tier-2 {
+      background: rgba(255, 213, 79, 0.1);
+      border-style: dashed;
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .hint-box.tier-3 {
+      background: rgba(239, 83, 80, 0.12);
+      border-style: solid;
+      border-color: #EF5350;
+      color: #EF5350;
+    }
+
+    .hint-box.show {
+      display: block;
+      animation: hintPopIn 0.3s ease;
+    }
+
+    @keyframes hintPopIn {
+      0% { opacity: 0; transform: scale(0.9) translateY(-5px); }
+      50% { transform: scale(1.02); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .hint-text-tier {
+      display: none;
+    }
+
+    .hint-text-tier.current {
+      display: block;
+    }
+
+    .hint-cost {
+      font-size: 13px;
+      margin-left: 8px;
+      opacity: 0.8;
     }
 
     /* SceneCard 元件 */
@@ -1120,6 +1215,59 @@
       complete() {
         [523, 659, 784, 1047].forEach((f, i) => 
           setTimeout(() => this.playTone(f, 0.2, 'sine', 0.2), i * 150)
+        );
+      }
+    };
+
+    // Sound Engine (enhanced audio with sound pool)
+    const SoundEngine = {
+      ctx: null,
+      poolSize: 4,
+      pool: [],
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        for (let i = 0; i < this.poolSize; i++) {
+          this.pool.push({ osc: null, gain: null, busy: false });
+        }
+      },
+      getAvailable() {
+        this.init();
+        for (let i = 0; i < this.pool.length; i++) {
+          if (!this.pool[i].busy) return this.pool[i];
+        }
+        return null;
+      },
+      play(freq, duration, type = 'sine', volume = 0.3) {
+        if (!settings.soundEnabled) return;
+        const slot = this.getAvailable();
+        if (!slot) return;
+        slot.busy = true;
+        slot.osc = this.ctx.createOscillator();
+        slot.gain = this.ctx.createGain();
+        slot.osc.type = type;
+        slot.osc.frequency.value = freq;
+        slot.gain.gain.value = volume;
+        slot.gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        slot.osc.connect(slot.gain);
+        slot.gain.connect(this.ctx.destination);
+        slot.osc.start();
+        slot.osc.stop(this.ctx.currentTime + duration);
+        setTimeout(() => { slot.busy = false; }, duration * 1000);
+      },
+      click() { this.play(800, 0.1, 'square', 0.1); },
+      success() { 
+        this.play(523, 0.2, 'sine', 0.2);
+        setTimeout(() => this.play(659, 0.2, 'sine', 0.2), 100);
+      },
+      fail() { this.play(200, 0.3, 'sawtooth', 0.15); },
+      badge() {
+        this.play(784, 0.15, 'sine', 0.2);
+        setTimeout(() => this.play(988, 0.15, 'sine', 0.2), 80);
+        setTimeout(() => this.play(1319, 0.3, 'sine', 0.25), 160);
+      },
+      complete() {
+        [523, 659, 784, 1047].forEach((f, i) => 
+          setTimeout(() => this.play(f, 0.2, 'sine', 0.2), i * 150)
         );
       }
     };
@@ -2680,6 +2828,7 @@
       
       currentScenario = scenario;
       currentScenarioNum = (currentScenarioNum || 0) + 1;
+      currentHintTier = 0; // Reset hint tier for new scenario
       
       const gameArea = document.getElementById('game-area');
 
@@ -2721,8 +2870,15 @@
             <button class="tool-btn" onclick="showHint(event)">💡 提示</button>
           </div>
           
-          <div class="hint-box" id="hint-box">
-            ${scenario.hint || '試下諗下，如果係你，你會點樣做？'}
+          <div class="hint-container" id="hint-container">
+            <div class="hint-tiers">
+              <button class="hint-tier-btn tier-1" onclick="showHintTier(1)" title="輕微提示">💡 Tier 1</button>
+              <button class="hint-tier-btn tier-2 locked" onclick="showHintTier(2)" title="中度提示">💡💡 Tier 2</button>
+              <button class="hint-tier-btn tier-3 locked" onclick="showHintTier(3)" title="完整答案">💡💡💡 Tier 3</button>
+            </div>
+            <div class="hint-box" id="hint-box">
+              ${scenario.hints?.[0] || scenario.hint || '試下諗下，如果係你，你會點樣做？'}
+            </div>
           </div>
           
           <div class="options">
@@ -2827,21 +2983,52 @@
       saveSettings();
     }
     
-    // 顯示提示
+    // 顯示提示 (Tier 1 by default)
     function showHint(e) {
-      if (window.__hintShowing) return;
-      window.__hintShowing = true;
-      
-      try {
-        const hintBox = document.getElementById('hint-box');
-        if (hintBox) {
-          hintBox.classList.toggle('show');
+      showHintTier(1);
+    }
+
+    // 3-Tier ARPG Hint System
+    let currentHintTier = 0;
+
+    function showHintTier(tier) {
+      if (tier < 1 || tier > 3) return;
+      if (currentHintTier >= tier) return; // Already unlocked this tier or higher
+
+      const hintBox = document.getElementById('hint-box');
+      const hintContainer = document.getElementById('hint-container');
+      if (!hintBox || !hintContainer) return;
+
+      // Get hints from scenario
+      const scenario = currentScenario;
+      const hints = scenario?.hints || [scenario?.hint || '試下諗下，如果係你，你會點樣做？'];
+
+      // Unlock tiers progressively (tier 1 unlocks tier 2, tier 2 unlocks tier 3)
+      currentHintTier = tier;
+
+      // Update tier buttons
+      const tierBtns = hintContainer.querySelectorAll('.hint-tier-btn');
+      tierBtns.forEach((btn, i) => {
+        btn.classList.remove('active', 'locked');
+        if (i + 1 < tier) {
+          btn.classList.add('active'); // Already used tiers
+        } else if (i + 1 === tier) {
+          btn.classList.add('active'); // Current tier
+        } else {
+          btn.classList.add('locked'); // Locked tiers
         }
-        
-        setTimeout(() => { window.__hintShowing = false; }, 300);
-      } catch(err) {
-        window.__hintShowing = false;
-      }
+      });
+
+      // Get hint content for this tier (0-indexed array access)
+      const hintIndex = tier - 1;
+      const hintContent = hints[hintIndex] || hints[hints.length - 1] || '試下諗下，如果係你，你會點樣做？';
+
+      // Update hint box with tier class and content
+      hintBox.className = 'hint-box show tier-' + tier;
+      hintBox.innerHTML = `<div class="hint-text-tier current">${hintContent}</div>`;
+
+      // Play hint sound
+      AudioSys.click();
     }
 
 // 選擇選項
@@ -2925,11 +3112,19 @@
         return `<strong>${emoji} ${e.character}:</strong> ${e.comment} <span class="change-amount">(${changeText}❤️)</span>`;
       }).join('<br><br>');
       
+      // Select epic ARPG phrase + color based on outcome
+      const isPositive = totalChange > 0;
+      const epicPhrases = isPositive
+        ? ['⚔️ 完美出招！', '✨ 暴擊成功！', '🌟 好感度UP！', '💥 關係大增！', '🎯 精準打擊！']
+        : ['💔 被反擊了...', '⚡ 生命值減少...', '💨 攻擊失敗...', '🌊 形勢逆轉...'];
+      const colorClass = isPositive ? 'title-positive' : 'title-negative';
+      const epicTitle = epicPhrases[Math.floor(Math.random() * epicPhrases.length)];
+
       gameArea.innerHTML = `
         <div class="result-overlay show">
           <div class="result-card feedback-modal">
             <div class="feedback-stage stage-consequence">
-              <div class="feedback-title">📢 發生咩事？</div>
+              <div class="feedback-title ${colorClass}">${epicTitle}</div>
               <div class="result-comment">${comments}</div>
               <button class="continue-btn" onclick="showGuidanceTip(this)">睇下點樣做得更好 💡</button>
             </div>
