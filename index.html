@@ -1204,6 +1204,20 @@
         <span id="soundStatus" style="color:var(--cream);font-size:14px;">開</span>
       </div>
     </div>
+
+    <div class="settings-section">
+      <span class="settings-label">🔊 語音強化模式</span>
+      <div class="settings-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="autoVoiceToggle" checked onchange="toggleAutoVoice(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="autoVoiceStatus" style="color:var(--cream);font-size:14px;">開</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);margin-top:8px;line-height:1.5;">
+        開啟後：每個情景自動朗讀<br>Hover 選項時大聲朗讀
+      </div>
+    </div>
   </div>
 
   <!-- Admin Panel -->
@@ -1231,7 +1245,8 @@
       fontSize: 20,
       speechRate: 0.9,
       soundEnabled: true,
-      playerName: ''
+      playerName: '',
+      autoVoiceRead: true  // 語音強化模式：自動朗讀所有文字
     };
 
     // Get player name (from input or saved)
@@ -1458,7 +1473,13 @@
       if (soundToggle) soundToggle.checked = settings.soundEnabled;
       const soundStatus = document.getElementById('soundStatus');
       if (soundStatus) soundStatus.innerText = settings.soundEnabled ? '開' : '關';
-      
+
+      // Auto Voice toggle
+      const autoVoiceToggle = document.getElementById('autoVoiceToggle');
+      if (autoVoiceToggle) autoVoiceToggle.checked = settings.autoVoiceRead;
+      const autoVoiceStatus = document.getElementById('autoVoiceStatus');
+      if (autoVoiceStatus) autoVoiceStatus.innerText = settings.autoVoiceRead ? '開' : '關';
+
       // Font sizes
       const elements = document.querySelectorAll('.scenario-desc, .dialogue-bubble, .option-btn, .hint-box, .result-comment');
       elements.forEach(el => {
@@ -3091,6 +3112,7 @@
     window.updateFontSize = updateFontSize;
     window.updateSpeed = updateSpeed;
     window.toggleSound = toggleSound;
+    window.toggleAutoVoice = toggleAutoVoice;
     window.saveScenarios = saveScenarios;
     window.showGuidanceTip = showGuidanceTip;
     window.finishFeedback = finishFeedback;
@@ -3227,7 +3249,7 @@
               const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
               return `
               <div class="option-wrapper">
-                <button class="option-btn" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
+                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
                   <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
                   ${warnIcon ? `<span class="moral-warn ${warnClass}">${warnIcon}</span>` : ''}
                 </button>
@@ -3349,7 +3371,13 @@
       document.getElementById('soundStatus').innerText = enabled ? '開' : '關';
       saveSettings();
     }
-    
+
+    function toggleAutoVoice(enabled) {
+      settings.autoVoiceRead = enabled;
+      document.getElementById('autoVoiceStatus').innerText = enabled ? '開' : '關';
+      saveSettings();
+    }
+
     // 顯示提示 (Tier 1 by default)
     function showHint(e) {
       showHintTier(1);
