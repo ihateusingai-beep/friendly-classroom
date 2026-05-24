@@ -642,8 +642,39 @@
     .location-selection { margin: 20px 0; }
     .location-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
     .location-btn { background: var(--bg-mid); border: 3px solid var(--cream-dark); color: var(--cream); padding: 12px 20px; font-family: 'Noto Sans HK', sans-serif; font-size: 14px; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
-    .location-btn:hover { background: var(--bg-light); border-color: var(--yellow); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--shadow); }
+    .option-btn:hover { background: var(--bg-light); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--shadow); cursor: pointer; }
+    .option-btn:hover::before { color: var(--green); }
 
+    /* Option wrapper + speak button */
+    .option-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .option-speak-btn {
+      background: var(--bg-dark);
+      border: 2px solid var(--bg-light);
+      color: var(--cream);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .option-speak-btn:hover {
+      background: var(--orange);
+      border-color: var(--yellow);
+      transform: scale(1.1);
+    }
+    .option-speak-btn.speaking {
+      animation: pulse 0.5s infinite;
+      background: var(--green);
+    }
     /* SettingsPanel 側邊欄 */
     .settings-toggle {
       position: fixed;
@@ -2907,9 +2938,12 @@
           
           <div class="options">
             ${scenario.options.map((opt, i) => `
-              <button class="option-btn" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
-                <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
-              </button>
+              <div class="option-wrapper">
+                <button class="option-btn" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
+                  <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
+                </button>
+                <button class="option-speak-btn" onclick="speakTextDirect('${opt.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="讀出呢個選項">🔊</button>
+              </div>
             `).join('')}
           </div>
 
@@ -2973,6 +3007,26 @@
         }
       } catch(err) {
         console.error('speakText error:', err);
+        window.__ttsSpeaking = false;
+      }
+    }
+
+    // 直接讀指定文字（用於選項讀音）
+    function speakTextDirect(text) {
+      if (!text || window.__ttsSpeaking) return;
+      window.__ttsSpeaking = true;
+      try {
+        if ('speechSynthesis' in window) {
+          speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'zh-HK';
+          utterance.rate = settings.speechRate || 0.9;
+          utterance.pitch = 1;
+          utterance.onend = () => { window.__ttsSpeaking = false; };
+          utterance.onerror = () => { window.__ttsSpeaking = false; };
+          speechSynthesis.speak(utterance);
+        }
+      } catch(err) {
         window.__ttsSpeaking = false;
       }
     }
@@ -3057,18 +3111,20 @@
 
 // 選擇選項
     function chooseOption(scenarioId, optionId) {
+      // Sound first (user feedback before anything else)
       SoundEngine.click();
+      AudioSys.click();
+      // Disable buttons immediately to prevent double-tap
+      document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+
       const scenario = gameData.scenarios.find(s => s.id === scenarioId);
       if (!scenario) return;
 
       const option = scenario.options.find(o => o.id === optionId);
       if (!option) return;
-      
+
       // Get option index for skill calculation
       const optionIndex = scenario.options.findIndex(o => o.id === optionId);
-
-      // Play click sound
-      AudioSys.click();
 
       // 保存選擇前既關係值（用于重試）
       previousRelationships = JSON.parse(JSON.stringify(relationships));
