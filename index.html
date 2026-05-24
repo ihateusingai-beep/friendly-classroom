@@ -2831,6 +2831,8 @@
     window.finishFeedback = finishFeedback;
     window.retryChoice = retryChoice;
     window.restartGame = restartGame;
+    window.speakTextDirect = speakTextDirect;
+    window.showHintTier = showHintTier;
 
     // 顯示關係值
     function showRelationships() {
@@ -3124,6 +3126,7 @@
       AudioSys.click();
       // Disable buttons immediately to prevent double-tap
       document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+      document.querySelectorAll('.option-speak-btn').forEach(b => b.style.pointerEvents = 'none');
 
       const scenario = gameData.scenarios.find(s => s.id === scenarioId);
       if (!scenario) return;
