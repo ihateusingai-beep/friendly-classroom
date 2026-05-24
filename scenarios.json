@@ -7,15 +7,27 @@
       "description": "小傑指著正在玩既小宇話：「我哋一齊笑佢好唔好？佢著既衫咁樣好搞笑呀！」",
       "hint": "嘲笑人會令人受傷。你希望人點對你呢？",
       "characters": [
-        {"name": "小傑", "emoji": "🧒", "initial_relationship": 50},
-        {"name": "小宇", "emoji": "👦", "initial_relationship": 50}
+        {
+          "name": "小傑",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小宇",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
       ],
       "options": [
         {
           "id": "s1-a",
           "text": "跟住一齊笑",
           "effects": [
-            {"character": "小傑", "change": 10, "comment": "你同小傑笑得好開心！但係小宇低頭就走咗。第二日你見到小宇覺得好心虛..."}
+            {
+              "character": "小傑",
+              "change": 10,
+              "comment": "你同小傑笑得好開心！但係小宇低頭就走咗。第二日你見到小宇覺得好心虛..."
+            }
           ],
           "next_scenario": "s2"
         },
@@ -23,8 +35,16 @@
           "id": "s1-b",
           "text": "靜靜地走開",
           "effects": [
-            {"character": "小傑", "change": 0, "comment": "你走開咗，但係成晚在想：「我應該講啲咩？」第二日你聽見小宇因為太傷心請假沒返學..."},
-            {"character": "小宇", "change": 5, "comment": "小宇唔知你既事，但係如果你出聲可能會唔同..."}
+            {
+              "character": "小傑",
+              "change": 0,
+              "comment": "你走開咗，但係成晚在想：「我應該講啲咩？」第二日你聽見小宇因為太傷心請假沒返學..."
+            },
+            {
+              "character": "小宇",
+              "change": 5,
+              "comment": "小宇唔知你既事，但係如果你出聲可能會唔同..."
+            }
           ],
           "next_scenario": "s2"
         },
@@ -32,8 +52,16 @@
           "id": "s1-c",
           "text": "「我唔覺得好笑，每個人都可以著自己鍾意既衫」",
           "effects": [
-            {"character": "小傑", "change": -5, "comment": "小傑話：「你唔夠朋友呀！」但係小宇望向你眼神裡有啲感謝..."},
-            {"character": "小宇", "change": 20, "comment": "小宇話：「多謝你呀...」點點頭就跑開咗。"}
+            {
+              "character": "小傑",
+              "change": -5,
+              "comment": "小傑話：「你唔夠朋友呀！」但係小宇望向你眼神裡有啲感謝..."
+            },
+            {
+              "character": "小宇",
+              "change": 20,
+              "comment": "小宇話：「多謝你呀...」點點頭就跑開咗。"
+            }
           ],
           "next_scenario": "s2"
         }
@@ -46,14 +74,22 @@
       "description": "小強拉著你話：「幫我一個忙，我啱先拎咗啱嘢既玩具車，帮我匿埋佢！」",
       "hint": "真正既朋友會幫你做啱既事，唔係一齊做錯。",
       "characters": [
-        {"name": "小強", "emoji": "🧒", "initial_relationship": 50}
+        {
+          "name": "小強",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        }
       ],
       "options": [
         {
           "id": "s2-a",
           "text": "答應幫佢匿",
           "effects": [
-            {"character": "小強", "change": 10, "comment": "你帮手匿咗入抽屜。结果老師發現監視器，以為係你偷！你喊咗但唔敢講真相，怕失去呢個「朋友」..."}
+            {
+              "character": "小強",
+              "change": 10,
+              "comment": "你帮手匿咗入抽屜。结果老師發現監視器，以為係你偷！你喊咗但唔敢講真相，怕失去呢個「朋友」..."
+            }
           ],
           "next_scenario": "s3"
         },
@@ -61,8 +97,16 @@
           "id": "s2-b",
           "text": "唔幫手亦唔話",
           "effects": [
-            {"character": "小強", "change": -5, "comment": "小強之後比老師發現，但係同老師話：「係佢叫我匿既！」你有口難言..."},
-            {"character": "小強", "change": -10, "comment": "小強之後俾人鬧，但係你覺得如果一開始勸佢還返就好啦..."}
+            {
+              "character": "小強",
+              "change": -5,
+              "comment": "小強之後比老師發現，但係同老師話：「係佢叫我匿既！」你有口難言..."
+            },
+            {
+              "character": "小強",
+              "change": -10,
+              "comment": "小強之後俾人鬧，但係你覺得如果一開始勸佢還返就好啦..."
+            }
           ],
           "next_scenario": "s3"
         },
@@ -70,7 +114,11 @@
           "id": "s2-c",
           "text": "「我哋一齊還返啦」",
           "effects": [
-            {"character": "小強", "change": 15, "comment": "小強話：「...好啦，对唔住。」你陪佢還咗去，小強多謝你陪佢面對！"}
+            {
+              "character": "小強",
+              "change": 15,
+              "comment": "小強話：「...好啦，对唔住。」你陪佢還咗去，小強多謝你陪佢面對！"
+            }
           ],
           "next_scenario": "s3"
         }
@@ -83,14 +131,22 @@
       "description": "小美最近成日同新同學玩，都唔理你啦。你覺得心裡酸酸地...",
       "hint": "感到孤單係正常，但用啱既方式表達感受，先可以令友誼更好。",
       "characters": [
-        {"name": "小珍", "emoji": "👧", "initial_relationship": 60}
+        {
+          "name": "小珍",
+          "emoji": "👧",
+          "initial_relationship": 60
+        }
       ],
       "options": [
         {
           "id": "s3-a",
           "text": "嬲既質問佢",
           "effects": [
-            {"character": "小美", "change": -20, "comment": "你衝過去大聲問，小美嚇一跳：「我淨係想識新朋友之嘛...」全班望住你，你覺得更加丟臉..."}
+            {
+              "character": "小美",
+              "change": -20,
+              "comment": "你衝過去大聲問，小美嚇一跳：「我淨係想識新朋友之嘛...」全班望住你，你覺得更加丟臉..."
+            }
           ],
           "next_scenario": "s4"
         },
@@ -98,8 +154,16 @@
           "id": "s3-b",
           "text": "覺得自己唔好，不再同佢講話",
           "effects": [
-            {"character": "小美", "change": -10, "comment": "你成日坐係度諗：「我果然唔值得被鍾意...」你越來越唔想講野..."},
-            {"character": "小美", "change": 5, "comment": "小美唔知你諗緊咩，但係見到你唔開心都有啲擔心..."}
+            {
+              "character": "小美",
+              "change": -10,
+              "comment": "你成日坐係度諗：「我果然唔值得被鍾意...」你越來越唔想講野..."
+            },
+            {
+              "character": "小美",
+              "change": 5,
+              "comment": "小美唔知你諗緊咩，但係見到你唔開心都有啲擔心..."
+            }
           ],
           "next_scenario": "s4"
         },
@@ -107,7 +171,11 @@
           "id": "s3-c",
           "text": "平靜咁話：「我有啲難過，我哋仲係好朋友嗎？」",
           "effects": [
-            {"character": "小美", "change": 20, "comment": "小美即刻話：「梗係啦！我淨係想多識一个人之嘛，你永远都好重要！」"}
+            {
+              "character": "小美",
+              "change": 20,
+              "comment": "小美即刻話：「梗係啦！我淨係想多識一个人之嘛，你永远都好重要！」"
+            }
           ],
           "next_scenario": "s4"
         }
@@ -120,16 +188,32 @@
       "description": "你見到小強唔小心整跌咗老師既花盆，但係佢同老師話：「係風吹跌既！」",
       "hint": "真正既朋友會幫對方改正錯誤，唔係隱瞞或者直接揭發。",
       "characters": [
-        {"name": "小強", "emoji": "🧒", "initial_relationship": 50},
-        {"name": "老師", "emoji": "👩‍🏫", "initial_relationship": 50}
+        {
+          "name": "小強",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 50
+        }
       ],
       "options": [
         {
           "id": "s4-a",
           "text": "扮作唔知道",
           "effects": [
-            {"character": "小強", "change": 5, "comment": "老師信咗小強。但係花盆既植物枯死咗，小強之後話：「 Victoria 唔會發現！」你心裡沉沉地..."},
-            {"character": "老師", "change": -10, "comment": "老師唔知真相，但係你覺得自己做錯咗..."}
+            {
+              "character": "小強",
+              "change": 5,
+              "comment": "老師信咗小強。但係花盆既植物枯死咗，小強之後話：「 Victoria 唔會發現！」你心裡沉沉地..."
+            },
+            {
+              "character": "老師",
+              "change": -10,
+              "comment": "老師唔知真相，但係你覺得自己做錯咗..."
+            }
           ],
           "next_scenario": "s5"
         },
@@ -137,8 +221,16 @@
           "id": "s4-b",
           "text": "大聲話係小強整既",
           "effects": [
-            {"character": "小強", "change": -25, "comment": "你大聲話係小強，小強一面紅，下堂之後反面：「叛徒！」你哋之後冇再講野，你心裡空左..."},
-            {"character": "老師", "change": 10, "comment": "老師知道你肯話真相，但你失去咗一個朋友..."}
+            {
+              "character": "小強",
+              "change": -25,
+              "comment": "你大聲話係小強，小強一面紅，下堂之後反面：「叛徒！」你哋之後冇再講野，你心裡空左..."
+            },
+            {
+              "character": "老師",
+              "change": 10,
+              "comment": "老師知道你肯話真相，但你失去咗一個朋友..."
+            }
           ],
           "next_scenario": "s5"
         },
@@ -146,7 +238,11 @@
           "id": "s4-c",
           "text": "私下同小強講：「你仲老師話實話啦，我陪你一齊去」",
           "effects": [
-            {"character": "小強", "change": 20, "comment": "小強話：「...好啦，對唔住。」你陪佢同一齊去認錯，老師話：「知錯能改就係好孩子！」"}
+            {
+              "character": "小強",
+              "change": 20,
+              "comment": "小強話：「...好啦，對唔住。」你陪佢同一齊去認錯，老師話：「知錯能改就係好孩子！」"
+            }
           ],
           "next_scenario": "s5"
         }
@@ -159,16 +255,32 @@
       "description": "小芳偷偷同你講：「我哋將安安既水壺匿埋，等佢搵唔到好好笑！」",
       "hint": "整蠱如果令人難過，就唔係好玩既遊戲。",
       "characters": [
-        {"name": "小芳", "emoji": "👧", "initial_relationship": 50},
-        {"name": "安安", "emoji": "👦", "initial_relationship": 50}
+        {
+          "name": "小芳",
+          "emoji": "👧",
+          "initial_relationship": 50
+        },
+        {
+          "name": "安安",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
       ],
       "options": [
         {
           "id": "s5-a",
           "text": "參與呢個整蠱",
           "effects": [
-            {"character": "小芳", "change": 10, "comment": "安安置咗好耐搵唔到水壺，最後惟有飲自來水。放學時佢媽媽知咗都好嬲，你聽到：「啲細路點解咁曳？」你訓左差啲..."},
-            {"character": "安安", "change": -20, "comment": "安安急到喊，你心裡好內疚..."}
+            {
+              "character": "小芳",
+              "change": 10,
+              "comment": "安安置咗好耐搵唔到水壺，最後惟有飲自來水。放學時佢媽媽知咗都好嬲，你聽到：「啲細路點解咁曳？」你訓左差啲..."
+            },
+            {
+              "character": "安安",
+              "change": -20,
+              "comment": "安安急到喊，你心裡好內疚..."
+            }
           ],
           "next_scenario": "s6"
         },
@@ -176,8 +288,16 @@
           "id": "s5-b",
           "text": "「我...我唔敢」",
           "effects": [
-            {"character": "小芳", "change": -10, "comment": "嗰班同學笑你細胆之后就唔再搵你玩。你觉得你似個懦夫，正義都不敢..."},
-            {"character": "安安", "change": 0, "comment": "至少你冇參與..."}
+            {
+              "character": "小芳",
+              "change": -10,
+              "comment": "嗰班同學笑你細胆之后就唔再搵你玩。你觉得你似個懦夫，正義都不敢..."
+            },
+            {
+              "character": "安安",
+              "change": 0,
+              "comment": "至少你冇參與..."
+            }
           ],
           "next_scenario": "s6"
         },
@@ -185,8 +305,16 @@
           "id": "s5-c",
           "text": "「咁樣會令安安難過，我不想參加」",
           "effects": [
-            {"character": "小芳", "change": 5, "comment": "小芳話：「 Victoria 咁呀...算啦。」佢嫌你無癮，但係你守得住自己既善良！"},
-            {"character": "安安", "change": 10, "comment": "安安唔知呢件事，但係你好似做啱咗..."}
+            {
+              "character": "小芳",
+              "change": 5,
+              "comment": "小芳話：「 Victoria 咁呀...算啦。」佢嫌你無癮，但係你守得住自己既善良！"
+            },
+            {
+              "character": "安安",
+              "change": 10,
+              "comment": "安安唔知呢件事，但係你好似做啱咗..."
+            }
           ],
           "next_scenario": "s6"
         }
@@ -199,16 +327,32 @@
       "description": "小明好嬲話：「我再都唔同小華玩啦！佢整壞咗我既玩具！」",
       "hint": "衝突時唔好即時企邊，先了解完整既故事。",
       "characters": [
-        {"name": "小明", "emoji": "🧒", "initial_relationship": 50},
-        {"name": "小華", "emoji": "👦", "initial_relationship": 50}
+        {
+          "name": "小明",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小華",
+          "emoji": "👦",
+          "initial_relationship": 50
+        }
       ],
       "options": [
         {
           "id": "s6-a",
           "text": "「係呀！小華太衰啦！我都唔同佢玩！」",
           "effects": [
-            {"character": "小明", "change": 10, "comment": "你同小明一齊排斥小華。但係之後你先知，小華���唔���心整壞既，佢本來想道歉但搵唔倒機會。小華喊咗，你覺得自己做錯咗..."},
-            {"character": "小華", "change": -25, "comment": "小華覺得被誤會，好傷心..."}
+            {
+              "character": "小明",
+              "change": 10,
+              "comment": "你同小明一齊排斥小華。但係之後你先知，小華其實唔係有心整壞既，佢本來想道歉但搵唔倒機會。小華喊咗，你覺得自己做錯咗..."
+            },
+            {
+              "character": "小華",
+              "change": -25,
+              "comment": "小華覺得被誤會，好傷心..."
+            }
           ],
           "next_scenario": "s7"
         },
@@ -216,8 +360,16 @@
           "id": "s6-b",
           "text": "乜都唔話",
           "effects": [
-            {"character": "小明", "change": 0, "comment": "小明越話越嬲仲搵其他人一齊排斥小華。你雖然冇參與但係都冇阻止。見到小華一個你心裡唔舒服..."},
-            {"character": "小華", "change": -10, "comment": "小華覺得自己一個人..."
+            {
+              "character": "小明",
+              "change": 0,
+              "comment": "小明越話越嬲仲搵其他人一齊排斥小華。你雖然冇參與但係都冇阻止。見到小華一個你心裡唔舒服..."
+            },
+            {
+              "character": "小華",
+              "change": -10,
+              "comment": "小華覺得自己一個人..."
+            }
           ],
           "next_scenario": "s7"
         },
@@ -225,8 +377,16 @@
           "id": "s6-c",
           "text": "「或者佢唔係故意？你有問過佢嗎？」",
           "effects": [
-            {"character": "小明", "change": 15, "comment": "小明諗咗下：「嗯...都係問下先...」之後發現係誤會，佢同小華和好咗！你幫佢哋化解咗爭執！"},
-            {"character": "小華", "change": 10, "comment": "小華多謝你幫佢講说话！"}
+            {
+              "character": "小明",
+              "change": 15,
+              "comment": "小明諗咗下：「嗯...都係問下先...」之後發現係誤會，佢同小華和好咗！你幫佢哋化解咗爭執！"
+            },
+            {
+              "character": "小華",
+              "change": 10,
+              "comment": "小華多謝你幫佢講说话！"
+            }
           ],
           "next_scenario": "s7"
         }
@@ -239,14 +399,22 @@
       "description": "小珍喊住搵你：「佢哋笑我跑得慢...我唔想上體育課啦...」",
       "hint": "朋友難過時，需要既係理解同支持，唔係凍冰冰既事實。",
       "characters": [
-        {"name": "小珍", "emoji": "👧", "initial_relationship": 60}
+        {
+          "name": "小珍",
+          "emoji": "👧",
+          "initial_relationship": 60
+        }
       ],
       "options": [
         {
           "id": "s7-a",
           "text": "「唔好喊啦，你既確跑得慢呀」",
           "effects": [
-            {"character": "小珍", "change": -20, "comment": "小珍喊得更大聲，覺得你唔明白佢。之後佢唔再好同你分享心事，你哋既友誼出現裂痕..."}
+            {
+              "character": "小珍",
+              "change": -20,
+              "comment": "小珍喊得更大聲，覺得你唔明白佢。之後佢唔再好同你分享心事，你哋既友誼出現裂痕..."
+            }
           ],
           "next_scenario": "s8"
         },
@@ -254,8 +422,16 @@
           "id": "s7-b",
           "text": "「冇所謂啦，唔好在意」",
           "effects": [
-            {"character": "小珍", "change": -5, "comment": "小珍點點頭，但係你睇得出佢仲係好難過。下次體育課佢扮肚痛唔想參加。你觉得你既安慰好似冇幫到佢..."},
-            {"character": "小珍", "change": 5, "comment": "至少有你在..."
+            {
+              "character": "小珍",
+              "change": -5,
+              "comment": "小珍點點頭，但係你睇得出佢仲係好難過。下次體育課佢扮肚痛唔想參加。你觉得你既安慰好似冇幫到佢..."
+            },
+            {
+              "character": "小珍",
+              "change": 5,
+              "comment": "至少有你在..."
+            }
           ],
           "next_scenario": "s8"
         },
@@ -263,7 +439,11 @@
           "id": "s7-c",
           "text": "「被笑一定好難過。跑步速度唔重要，重要的是你有參與！」",
           "effects": [
-            {"character": "小珍", "change": 20, "comment": "小珍即刻笑咗：「多謝你呀！你最明白我！」之後體育堂佢好積極咁參與！"}
+            {
+              "character": "小珍",
+              "change": 20,
+              "comment": "小珍即刻笑咗：「多謝你呀！你最明白我！」之後體育堂佢好積極咁參與！"
+            }
           ],
           "next_scenario": "s8"
         }
@@ -276,15 +456,27 @@
       "description": "你自己一個人坐係長椅度，望住其他同學度玩，心裡有啲難過...",
       "hint": "感到孤單既時候，你可以搵信任既人大肆傾，或者主動試join其他人。",
       "characters": [
-        {"name": "同學A", "emoji": "👦", "initial_relationship": 50},
-        {"name": "老師", "emoji": "👩‍🏫", "initial_relationship": 60}
+        {
+          "name": "同學A",
+          "emoji": "👦",
+          "initial_relationship": 50
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 60
+        }
       ],
       "options": [
         {
           "id": "s8-a",
           "text": "繼續坐係度，覺得冇人鍾意我",
           "effects": [
-            {"character": "同學A", "change": -5, "comment": "你成個下晝都坐係度，心情越來越低落。返到屋企你同媽媽話：「我冇朋友...」媽媽好擔心，但係你唔知點改變..."}
+            {
+              "character": "同學A",
+              "change": -5,
+              "comment": "你成個下晝都坐係度，心情越來越低落。返到屋企你同媽媽話：「我冇朋友...」媽媽好擔心，但係你唔知點改變..."
+            }
           ],
           "next_scenario": null
         },
@@ -292,7 +484,11 @@
           "id": "s8-b",
           "text": "搵老師傾下我既心情",
           "effects": [
-            {"character": "老師", "change": 15, "comment": "老師好好心機聽你講，話：「不如搵啲同學一齊玩啦？」之後老師幫你介紹咗幾個朋友，你逐步逐步融入咗！"}
+            {
+              "character": "老師",
+              "change": 15,
+              "comment": "老師好好心機聽你講，話：「不如搵啲同學一齊玩啦？」之後老師幫你介紹咗幾個朋友，你逐步逐步融入咗！"
+            }
           ],
           "next_scenario": null
         },
@@ -300,7 +496,448 @@
           "id": "s8-c",
           "text": "去問其他同學：「我可以一齊玩嗎？」",
           "effects": [
-            {"character": "同學A", "change": 20, "comment": "你真係好勇敢！嗰個同學即刻話：「梗係可以啦！一齊啦！」你交咗新朋友，原來主動一啲都唔難！"}
+            {
+              "character": "同學A",
+              "change": 20,
+              "comment": "你真係好勇敢！嗰個同學即刻話：「梗係可以啦！一齊啦！」你交咗新朋友，原來主動一啲都唔難！"
+            }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "title": "關卡9：執到銀包",
+      "background": "洗手間・課間",
+      "description": "你喺洗手間執到一個銀包入面有身份證、現金仲有八達通。你知道失主一定好心急...",
+      "hint": "執到嘢要物歸原主，呢個係誠實既表現。",
+      "characters": [
+        {
+          "name": "失主",
+          "emoji": "🧑",
+          "initial_relationship": 50
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s9-a",
+          "text": "偷偷袋起銀包入面既錢",
+          "effects": [
+            {
+              "character": "失主",
+              "change": -30,
+              "comment": "失主發現銀包入面既錢唔見咗，報咗老師。你被查到，好驚訝...班主任好失望望著你..."
+            },
+            {
+              "character": "老師",
+              "change": -20,
+              "comment": "老師知道你做錯咗，你覺得無面目見人..."
+            }
+          ],
+          "next_scenario": "s10"
+        },
+        {
+          "id": "s9-b",
+          "text": "扮作冇嘢發生，放低銀包就走",
+          "effects": [
+            {
+              "character": "失主",
+              "change": -10,
+              "comment": "銀包仲喺度但冇人知邊個執到。失主損失哂銀包入面既八達通同現金，你心裡有個結..."
+            },
+            {
+              "character": "老師",
+              "change": 0,
+              "comment": "老師唔知件事，但係你知道自己可以做得更好..."
+            }
+          ],
+          "next_scenario": "s10"
+        },
+        {
+          "id": "s9-c",
+          "text": "交去itnessar檯話：「我執到銀包」",
+          "effects": [
+            {
+              "character": "失主",
+              "change": 25,
+              "comment": "失主好感激你，八達通同身份證都搵得返！你得到班主任表揚，全班為你鼓掌！"
+            },
+            {
+              "character": "老師",
+              "change": 15,
+              "comment": "老師話：「你係誠實既好孩子！」老師仲加分！你心裡好踏實！"
+            }
+          ],
+          "next_scenario": "s10"
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "title": "關卡10：目睹欺凌",
+      "background": "樓梯・下課後",
+      "description": "你見到有幾個同學圍住一個同學度蝦，仲要掉佢書包。你心裡好驚，但又怕得罪人...",
+      "hint": "見義勇為係一種道德勇氣。你可以安全地求助大人。",
+      "characters": [
+        {
+          "name": "阿標",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小霸王",
+          "emoji": "🧑",
+          "initial_relationship": 30
+        },
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s10-a",
+          "text": "走開當冇見到，驚被埋堆",
+          "effects": [
+            {
+              "character": "阿標",
+              "change": -20,
+              "comment": "阿標被蝦得好慘，你聽到佢响廁所喊。你訓低左訓唔著，覺得自己係懦夫..."
+            },
+            {
+              "character": "小霸王",
+              "change": 5,
+              "comment": "小霸王繼續蝦人，覺得冇人敢出聲，越嚟越囂張..."
+            }
+          ],
+          "next_scenario": "s11"
+        },
+        {
+          "id": "s10-b",
+          "text": "大聲喝止：「夠啦！你哋！」",
+          "effects": [
+            {
+              "character": "阿標",
+              "change": 15,
+              "comment": "阿標知有人幫手，但係小霸王反應好大：「關你鬼事！」你被都好驚...下星期小霸王開始蝦你..."
+            },
+            {
+              "character": "小霸王",
+              "change": -15,
+              "comment": "小霸王觉得你破壞佢威風，佢暫時驚你但係心裡記住咗..."
+            }
+          ],
+          "next_scenario": "s11"
+        },
+        {
+          "id": "s10-c",
+          "text": "立刻走去告訴老師",
+          "effects": [
+            {
+              "character": "阿標",
+              "change": 25,
+              "comment": "老師及時赶到，小霸王被制止。阿標多謝你：「如果唔係你，我唔知點算...」老師讚你係勇敢既孩子！"
+            },
+            {
+              "character": "老師",
+              "change": 20,
+              "comment": "老師話：「你做得好好！知衰要報老師，呢個係最有智慧既做法！」"
+            }
+          ],
+          "next_scenario": "s11"
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "title": "關卡11：新同學",
+      "background": "課室・開學第一日",
+      "description": "今日有個新同學阿琳轉讀你班，佢坐喺你隔籬，睇落好緊張。阿琳唔識廣東話，英文都係剛學...",
+      "hint": "接納新朋友係善良既表現，每個人都經歷過適應期。",
+      "characters": [
+        {
+          "name": "阿琳",
+          "emoji": "👧",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小美",
+          "emoji": "👧",
+          "initial_relationship": 55
+        }
+      ],
+      "options": [
+        {
+          "id": "s11-a",
+          "text": "同其他同學傾偈當冇見到阿琳",
+          "effects": [
+            {
+              "character": "阿琳",
+              "change": -15,
+              "comment": "阿琳一個人坐咗成日，冇人搵佢傾偈。下課時佢一個人坐响度喊，你心裡有啲难受但係已經太遲..."
+            },
+            {
+              "character": "小美",
+              "change": 0,
+              "comment": "小美都係咁嘅狀况，你哋冇學識點幫助新同學..."
+            }
+          ],
+          "next_scenario": "s12"
+        },
+        {
+          "id": "s11-b",
+          "text": "用英文問佢：「You okay?」",
+          "effects": [
+            {
+              "character": "阿琳",
+              "change": 20,
+              "comment": "阿琳即刻笑咗：「Yeah, a bit nervous!」你嘗試用英文同佢傾偈，雖然文法錯但係阿琳感受到你既善意！"
+            },
+            {
+              "character": "小美",
+              "change": 5,
+              "comment": "小美見到你主動，仲加入一齊幫阿琳。"
+            }
+          ],
+          "next_scenario": "s12"
+        },
+        {
+          "id": "s11-c",
+          "text": "主動介紹自己，帶佢參觀校園",
+          "effects": [
+            {
+              "character": "阿琳",
+              "change": 30,
+              "comment": "阿琳好開心話：「You are so kind!」佢主動話下次請你食午餐！你哋成為好朋友！"
+            },
+            {
+              "character": "小美",
+              "change": 10,
+              "comment": "小美佩服你既勇氣：「你幾時變得咁勁？」"
+            }
+          ],
+          "next_scenario": "s12"
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "title": "關卡12：分組任務",
+      "background": "課室・小組討論",
+      "description": "老師叫你哋自由分組做project，你發現有個同學阿偉坐埋一邊冇人搵，因為佢平時比較安靜。你已經同小美、小林傾好咗一組...",
+      "hint": "公平唔只係關於自己，亦都關於照顧被忽略既人。",
+      "characters": [
+        {
+          "name": "阿偉",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        },
+        {
+          "name": "小美",
+          "emoji": "👧",
+          "initial_relationship": 60
+        }
+      ],
+      "options": [
+        {
+          "id": "s12-a",
+          "text": "當冇見到阿偉，反正佢自己唔出聲",
+          "effects": [
+            {
+              "character": "阿偉",
+              "change": -20,
+              "comment": "阿偉最後被老師編入另一組，佢覺得冇人鍾意佢性格。你完成project，但係阿偉見到你唔理佢好難過..."
+            },
+            {
+              "character": "小美",
+              "change": 0,
+              "comment": "小美有啲良心過意唔去：「我哋係咪應該叫阿偉？」但係你哋都係冇出聲..."
+            }
+          ],
+          "next_scenario": "s13"
+        },
+        {
+          "id": "s12-b",
+          "text": "叫阿偉加入你哋組，但係心裡覺得麻煩",
+          "effects": [
+            {
+              "character": "阿偉",
+              "change": 15,
+              "comment": "阿偉加入咗但係你表現得好冷淡。阿偉感受到你覺得佢麻煩，冇幾耐就退出咗。你隊組完成咗但係阿偉話：「算啦我唔麻煩你哋」..."
+            },
+            {
+              "character": "小美",
+              "change": -5,
+              "comment": "小美話：「你叫咗佢但係態度好差，佢梗難受啦...」"
+            }
+          ],
+          "next_scenario": "s13"
+        },
+        {
+          "id": "s12-c",
+          "text": "主動走過去邀請阿偉：「我哋一組啦，一齊諗橋？」",
+          "effects": [
+            {
+              "character": "阿偉",
+              "change": 30,
+              "comment": "阿偉呆咗一下，然後笑咗：「好呀！」佢好積極投入，你發現佢其實好有創意！阿偉話：「多謝你叫我，我以為冇人想要我...」"
+            },
+            {
+              "character": "小美",
+              "change": 10,
+              "comment": "小美話：「你好叻呀！阿偉其實幾好傾！」"
+            }
+          ],
+          "next_scenario": "s13"
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "title": "關卡13：忘記功課",
+      "background": "課室・朝早",
+      "description": "你琴晚玩得太夜，唔記得做數學功課。而家老師正要收功課，你心裡好驚...\n\n你想起有同學抄你功課，你想抄返，但係又驚被發現...",
+      "hint": "承認過失需要勇氣，但係係負責任既第一步。",
+      "characters": [
+        {
+          "name": "老師",
+          "emoji": "👩‍🏫",
+          "initial_relationship": 55
+        },
+        {
+          "name": "小明",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s13-a",
+          "text": "抄小明既功課扮係自己做的",
+          "effects": [
+            {
+              "character": "老師",
+              "change": -25,
+              "comment": "老師發現你抄功課，好嬲話：「你係抄既，以後我唔信你！」你被記缺點，家長要被請見..."
+            },
+            {
+              "character": "小明",
+              "change": -5,
+              "comment": "小明有啲嬲：「你抄我作業，萬一被發現我點算？」"
+            }
+          ],
+          "next_scenario": "s14"
+        },
+        {
+          "id": "s13-b",
+          "text": "扮冇帶功課，試圖走過這一關",
+          "effects": [
+            {
+              "character": "老師",
+              "change": -10,
+              "comment": "老師話：「下堂記得帶。」但係你心知肚明講咗大話，下一堂你更驚...你成日都驚被拆穿..."
+            },
+            {
+              "character": "小明",
+              "change": 0,
+              "comment": "小明唔知你做咗乜，但係你心裡不舒服..."
+            }
+          ],
+          "next_scenario": "s14"
+        },
+        {
+          "id": "s13-c",
+          "text": "舉手話：「老師，對唔住，我琴晚唔記得做，我會今晚補做」",
+          "effects": [
+            {
+              "character": "老師",
+              "change": 20,
+              "comment": "老師話：「知道錯了能承認，呢個係負責任既表現。今晚補做黎，交到就可以。」你心裡輕鬆好多，落堂後立刻補做！"
+            },
+            {
+              "character": "小明",
+              "change": 5,
+              "comment": "小明見到你敢認錯，內心佩服：「其實我琴晚都未做...」佢都走去主動承認老師話：「其實我仲未做完...」"
+            }
+          ],
+          "next_scenario": "s14"
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "title": "關卡14：文化尊重",
+      "background": "飯堂・午膳時間",
+      "description": "你見到新同學阿敏唔食猪肉，伊始帶飯時有啲尴尬解釋：「我宗教唔允許...」有同學笑話：「吓？咁你食咩先？怪人！」阿敏紅咗面...",
+      "hint": "每個人既宗教同文化都值得尊重，嘲笑係唔禮貌既行為。",
+      "characters": [
+        {
+          "name": "阿敏",
+          "emoji": "👧",
+          "initial_relationship": 50
+        },
+        {
+          "name": "大雄",
+          "emoji": "🧒",
+          "initial_relationship": 50
+        }
+      ],
+      "options": [
+        {
+          "id": "s14-a",
+          "text": "跟住笑話：「係囉，冇猪肉食你食狗肉呀？」",
+          "effects": [
+            {
+              "character": "阿敏",
+              "change": -25,
+              "comment": "阿敏喊咗跑走咗，之後幾日都唔敢黎飯堂。你繼續笑但係心裡有個聲音話：「我做錯咗...」"
+            },
+            {
+              "character": "大雄",
+              "change": 5,
+              "comment": "大雄覺得你好搞笑，但係有啲同學皸眉頭..."
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s14-b",
+          "text": "唔出聲但心裡覺得笑人唔啱",
+          "effects": [
+            {
+              "character": "阿敏",
+              "change": -5,
+              "comment": "你冇參加但係都冇幫口。阿敏覺得孤助，佢之後避免响午膳時間出現..."
+            },
+            {
+              "character": "大雄",
+              "change": 0,
+              "comment": "大雄繼續笑，但係你心裡有個節..."
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s14-c",
+          "text": "企起身話：「文化同宗教應該尊重，唔好笑人！」",
+          "effects": [
+            {
+              "character": "阿敏",
+              "change": 30,
+              "comment": "阿敏感激望向你，眼泛淚光：「多謝你...」大雄收聲咗，其他同學開始明白尊重既重要。老師事後表揚你！"
+            },
+            {
+              "character": "大雄",
+              "change": 5,
+              "comment": "大雄面紅孅孅走開，但係下星期佢走黎道歉：「對唔住，我唔應該笑人...」"
+            }
           ],
           "next_scenario": null
         }
