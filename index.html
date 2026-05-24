@@ -2884,7 +2884,15 @@
       currentScenario = scenario;
       currentScenarioNum = (currentScenarioNum || 0) + 1;
       currentHintTier = 0; // Reset hint tier for new scenario
-      
+
+      // Auto-speak scenario description on show
+      setTimeout(() => {
+        const bubble = document.querySelector('.dialogue-bubble');
+        const descEl = document.querySelector('.scenario-desc');
+        const text = (bubble?.textContent || descEl?.textContent || '').trim();
+        if (text && settings.soundEnabled) speakTextDirect(text);
+      }, 300);
+
       const gameArea = document.getElementById('game-area');
 
       // 收集情景中的角色
