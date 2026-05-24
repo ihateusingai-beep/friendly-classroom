@@ -1267,6 +1267,10 @@
     ];
     // 追蹤統計
     let choiceStats = { honestChoices: 0, braveChoices: 0, kindChoices: 0, fairChoices: 0, growthChoices: 0 };
+
+    // 課堂排行榜
+    let leaderboard = []; // {id, name, moral, avgRel, badges, date}
+    const MAX_LEADERBOARD = 20;
     
     // Settings
     let settings = {
@@ -3229,6 +3233,73 @@
     style.textContent = '@keyframes slideIn { from { transform:translateX(100px);opacity:0; } to { transform:translateX(0);opacity:1; } }';
     document.head.appendChild(style);
 
+    // ===== 課堂排行榜 =====
+    function loadLeaderboard() {
+      const saved = localStorage.getItem('friendly-classroom-leaderboard');
+      return saved ? JSON.parse(saved) : [];
+    }
+    function saveLeaderboard(data) {
+      localStorage.setItem('friendly-classroom-leaderboard', JSON.stringify(data));
+    }
+    function addToLeaderboard(playerName, avgRel, moral, badges) {
+      leaderboard = loadLeaderboard();
+      const entry = {
+        id: Date.now(),
+        name: playerName || '匿名同學',
+        moral,
+        avgRel: Math.round(avgRel),
+        badges: badges.slice(),
+        date: new Date().toLocaleDateString('zh-HK')
+      };
+      leaderboard.unshift(entry);
+      leaderboard = leaderboard.slice(0, MAX_LEADERBOARD);
+      saveLeaderboard(leaderboard);
+      return entry;
+    }
+    function showLeaderboard() {
+      leaderboard = loadLeaderboard();
+      const gameArea = document.getElementById('game-area');
+      const top3 = leaderboard.slice(0, 3);
+      const rest = leaderboard.slice(3);
+      gameArea.innerHTML = `
+        <div class="scenario-card">
+          <div style="text-align:center;margin-bottom:20px;">
+            <div style="font-family:'Press Start 2P',monospace;font-size:18px;color:var(--yellow);text-shadow:2px 2px 0 var(--orange-dark);">🏆 道德排行榜</div>
+            <div style="color:var(--cream);font-size:12px;margin-top:8px;">全班最高道德值排名</div>
+          </div>
+          ${leaderboard.length === 0 ? `
+            <div style="text-align:center;color:var(--cream);padding:40px;">
+              <div style="font-size:48px;">🏆</div>
+              <div style="margin-top:10px;">仲未有同學上榜</div>
+              <div style="font-size:12px;margin-top:5px;">完成遊戲就可以上榜！</div>
+            </div>
+          ` : `
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${leaderboard.map((entry, i) => {
+                const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+                const rankColor = i === 0 ? 'var(--yellow)' : i === 1 ? '#c0c0c0' : i === 2 ? '#cd7f32' : 'var(--cream)';
+                return `
+                  <div style="display:flex;align-items:center;gap:10px;background:var(--bg-dark);border:3px solid ${rankColor};border-radius:8px;padding:10px 15px;">
+                    <div style="font-size:24px;">${rank}</div>
+                    <div style="flex:1;">
+                      <div style="color:${rankColor};font-size:14px;font-weight:bold;">${entry.name}</div>
+                      <div style="color:var(--cream);font-size:11px;">${entry.date}</div>
+                    </div>
+                    <div style="text-align:right;">
+                      <div style="color:var(--green);font-size:12px;">⚖️${entry.moral}</div>
+                      <div style="color:var(--yellow);font-size:11px;">❤️${entry.avgRel}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+          <button class="home-btn" onclick="resetGame()" style="margin-top:20px;">🏠 回首頁</button>
+        </div>
+      `;
+    }
+    window.showLeaderboard = showLeaderboard;
+
     // 開始遊戲
     function startGame(location) {
       console.log('[DEBUG] startGame called with location:', location);
@@ -3829,6 +3900,9 @@
       if (avgRelationship > gameStats.bestScore) gameStats.bestScore = avgRelationship;
       finalizeGame(avgRelationship, currentScenario?.id);
 
+      // 加入排行榜
+      addToLeaderboard(playerName, avgRelationship, moral, badges);
+
       // 學習要點（包含道德）
       let learningPoints = [];
       for (const [name, value] of Object.entries(relationships)) {
@@ -3865,6 +3939,7 @@
             </div>` : ''}
             <div class="cert-date">頒發日期：${today}</div>
           </div>
+          <button class="home-btn" onclick="showLeaderboard()" style="margin-top:15px;">🏆 睇排行榜</button>
           <div style="margin:20px 0;">
             <p style="color:var(--cream);font-size:14px;">📊 技能進度：</p>
             ${showSkillProgress()}
