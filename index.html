@@ -1218,6 +1218,20 @@
         開啟後：每個情景自動朗讀<br>Hover 選項時大聲朗讀
       </div>
     </div>
+
+    <div class="settings-section">
+      <span class="settings-label">📗 兩選項簡化模式</span>
+      <div class="settings-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="simpleModeToggle" onchange="toggleSimpleMode(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="simpleModeStatus" style="color:var(--cream);font-size:14px;">關</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);margin-top:8px;line-height:1.5;">
+        開啟後：每關只顯示兩個選項<br>適合特殊教育學生
+      </div>
+    </div>
   </div>
 
   <!-- Admin Panel -->
@@ -1260,7 +1274,8 @@
       speechRate: 0.9,
       soundEnabled: true,
       playerName: '',
-      autoVoiceRead: true  // 語音強化模式：自動朗讀所有文字
+      autoVoiceRead: true,  // 語音強化模式：自動朗讀所有文字
+      simpleMode: false     // 兩選項簡化模式
     };
 
     // Get player name (from input or saved)
@@ -1493,6 +1508,12 @@
       if (autoVoiceToggle) autoVoiceToggle.checked = settings.autoVoiceRead;
       const autoVoiceStatus = document.getElementById('autoVoiceStatus');
       if (autoVoiceStatus) autoVoiceStatus.innerText = settings.autoVoiceRead ? '開' : '關';
+
+      // Simple Mode toggle
+      const simpleModeToggle = document.getElementById('simpleModeToggle');
+      if (simpleModeToggle) simpleModeToggle.checked = settings.simpleMode;
+      const simpleModeStatus = document.getElementById('simpleModeStatus');
+      if (simpleModeStatus) simpleModeStatus.innerText = settings.simpleMode ? '開' : '關';
 
       // Font sizes
       const elements = document.querySelectorAll('.scenario-desc, .dialogue-bubble, .option-btn, .hint-box, .result-comment');
@@ -3160,6 +3181,7 @@
     window.updateSpeed = updateSpeed;
     window.toggleSound = toggleSound;
     window.toggleAutoVoice = toggleAutoVoice;
+    window.toggleSimpleMode = toggleSimpleMode;
     window.saveScenarios = saveScenarios;
     window.showGuidanceTip = showGuidanceTip;
     window.finishFeedback = finishFeedback;
@@ -3290,7 +3312,7 @@
           </div>
           
           <div class="options">
-            ${scenario.options.map((opt, i) => {
+            ${(settings.simpleMode ? scenario.options.slice(0,2) : scenario.options).map((opt, i) => {
               const moralChange = opt.effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
               const warnIcon = moralChange > 0 ? '⚠️+'+moralChange : moralChange < 0 ? '⚠️'+moralChange : '';
               const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
@@ -3422,6 +3444,12 @@
     function toggleAutoVoice(enabled) {
       settings.autoVoiceRead = enabled;
       document.getElementById('autoVoiceStatus').innerText = enabled ? '開' : '關';
+      saveSettings();
+    }
+
+    function toggleSimpleMode(enabled) {
+      settings.simpleMode = enabled;
+      document.getElementById('simpleModeStatus').innerText = enabled ? '開' : '關';
       saveSettings();
     }
 
