@@ -184,6 +184,10 @@
       color: var(--white);
       margin-top: 5px;
     }
+    .moral-card {
+      border-color: var(--yellow) !important;
+      background: linear-gradient(135deg, var(--bg-mid), #3a2f00) !important;
+    }
 
     /* 情景卡 */
     .scenario-card {
@@ -1204,6 +1208,7 @@
   <script>
     let gameData = { scenarios: [], endings: [] };
     let relationships = {};
+    let moral = 50; // 道德值 0-100
     let currentScenario = null;
     let currentScenarioNum = 0;
     let totalScenarios = 0; // 動態計算
@@ -1403,6 +1408,7 @@
     
     // Game state for retry
     let previousRelationships = null;
+    let previousMoral = 50;
     let currentOnContinue = null;
     
     // 初始化
@@ -1483,6 +1489,7 @@
             {
               "character": "小傑",
               "change": 10,
+              "moralChange": -15,
               "comment": "你同小傑笑得好開心！但係小宇低頭就走咗。第二日你見到小宇覺得好心虛..."
             }
           ],
@@ -1495,11 +1502,13 @@
             {
               "character": "小傑",
               "change": 0,
+              "moralChange": -5,
               "comment": "你走開咗，但係成晚在想：「我應該講啲咩？」第二日你聽見小宇因為太傷心請假沒返學..."
             },
             {
               "character": "小宇",
               "change": 5,
+              "moralChange": 0,
               "comment": "小宇唔知你既事，但係如果你出聲可能會唔同..."
             }
           ],
@@ -1512,11 +1521,13 @@
             {
               "character": "小傑",
               "change": -5,
+              "moralChange": 10,
               "comment": "小傑話：「你唔夠朋友呀！」但係小宇望向你眼神裡有啲感謝..."
             },
             {
               "character": "小宇",
               "change": 20,
+              "moralChange": 5,
               "comment": "小宇話：「多謝你呀...」點點頭就跑開咗。"
             }
           ],
@@ -2465,6 +2476,246 @@
           "next_scenario": null
         }
       ]
+    },
+    {
+      "id": "s-c5",
+      "title": "道德關卡：考試作弊",
+      "background": "考試期間",
+      "description": "你發現你最好的朋友小明正在抄隔壁同學的答案。他成績一向不太好，如果被發現一定會被記過。你應該點做？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 70 }
+      ],
+      "hints": [
+        "作弊一時爽，但係被發現就麻煩了...",
+        "作為朋友，我哋係應該幫佢？定係制止佢？",
+        "你嘅選擇會影響你既道德值，同埋你哋既友誼。"
+      ],
+      "options": [
+        {
+          "id": "s-c5-a",
+          "text": "假装睇唔到，等佢自己決定",
+          "effects": [
+            { "character": "小明", "change": 5, "moralChange": -10, "comment": "小明之後高分但被懷疑，你幫佢散除嫌疑..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c5-b",
+          "text": "輕聲提佢「有人望過來」提醒佢",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": 10, "comment": "小明即刻停咗，之後多謝你提醒..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c5-c",
+          "text": "立即告知老師",
+          "effects": [
+            { "character": "小明", "change": -30, "moralChange": 20, "comment": "小明被記過，覺得你出賣咗佢..." }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c6",
+      "title": "道德關卡：拾金不昧",
+      "background": "小息時間・走廊",
+      "description": "你在走廊執到一百元，幾張紅色鈔票。你抬頭望見小明正低頭走過，唔知係咪佢丢既。你應該點做？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 60 }
+      ],
+      "hints": [
+        "一百元可以買好多零食，但係係唔係屬於你？",
+        "如果你丢咗錢，你希望其他人點做？",
+        "誠實同善良，邊個更重要？"
+      ],
+      "options": [
+        {
+          "id": "s-c6-a",
+          "text": "自己收起來，認為「執到就係我」",
+          "effects": [
+            { "character": "小明", "change": -10, "moralChange": -20, "comment": "小明發現丢了錢，周圍搵，喊咗..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c6-b",
+          "text": "交去訓導處，等人認領",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": 25, "comment": "小明找回金錢，多謝你！老師赞你誠實！" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c6-c",
+          "text": "問小明係咪丢咗錢",
+          "effects": [
+            { "character": "小明", "change": 20, "moralChange": 15, "comment": "小明確認係佢既，多謝你拾金不昧！" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c7",
+      "title": "道德關卡：網絡欺凌",
+      "background": "回家後・手機",
+      "description": "你在同學群組看到有人post咗小宇的醜相片，大家都在笑。你知呢張相片係被恶意PS過的，但係小宇唔知件事。你應該點做？",
+      "characters": [
+        { "name": "小宇", "emoji": "👦", "initial_relationship": 50 }
+      ],
+      "hints": [
+        "網絡世界唔係法外之地，每個行為也有後果...",
+        "旁觀者的沉默，其實也是一種選擇。",
+        "你係想保護小宇，定係想埋堆？"
+      ],
+      "options": [
+        {
+          "id": "s-c7-a",
+          "text": "和朋友一齊笑",
+          "effects": [
+            { "character": "小宇", "change": -20, "moralChange": -25, "comment": "你參與咗網絡欺凌，小宇發現後打俾媽媽喊..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c7-b",
+          "text": "退出群組，當作睇唔到",
+          "effects": [
+            { "character": "小宇", "change": 0, "moralChange": -5, "comment": "你逃避咗，但係問題仍然存在..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c7-c",
+          "text": "私信小宇告知情況，並公開指責",
+          "effects": [
+            { "character": "小宇", "change": 25, "moralChange": 20, "comment": "你保護咗小宇，雖然俾人話你串，但係你做咗啱既嘢！" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c8",
+      "title": "道德關卡：誠實的勇氣",
+      "background": "課室・朝早",
+      "description": "你不小心撞跌咗同學的文具，整爛咗佢最鐘意的筆。你認為老師不會發現係你，但係你內心知道應該承認。你應該點做？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 55 }
+      ],
+      "hints": [
+        "承認錯誤需要勇氣，但係會令人更加尊重你。",
+        "有啲嘢比「唔被發現」更重要，比如誠信。",
+        "你希望別人點樣對待你，你就要先點樣對待人。"
+      ],
+      "options": [
+        {
+          "id": "s-c8-a",
+          "text": "快速執起整番好，當作冇事發生",
+          "effects": [
+            { "character": "小明", "change": 5, "moralChange": -15, "comment": "小明發現筆有問題但係唔知係你整爛，你僥倖走過..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c8-b",
+          "text": "主動承認「我整爛咗，對不起」",
+          "effects": [
+            { "character": "小明", "change": 20, "moralChange": 20, "comment": "小明話：「算啦，你主動承認係好孩子。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c8-c",
+          "text": "走去店鋪買過一支賠償俾佢",
+          "effects": [
+            { "character": "小明", "change": 25, "moralChange": 25, "comment": "小明話：「你係我見過最有擔當既人！」" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c9",
+      "title": "道德關卡：誠實的勇氣",
+      "background": "課室・朝早",
+      "description": "老師表揚咗你今次考試做得好，但你心知肚明，小明先係真正答啱大多數題目既人——你只係抄咗佢。你應該點做？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 60 }
+      ],
+      "hints": [
+        "虛假的光環唔會為你帶來真正的尊重...",
+        "遲早都會有人知道真相，與其被發現，不如主動承認。",
+        "榮譽係要靠自己攞既，唔係靠呃人呃返黎。"
+      ],
+      "options": [
+        {
+          "id": "s-c9-a",
+          "text": "接受讚賞，暗暗開心就好",
+          "effects": [
+            { "character": "小明", "change": -15, "moralChange": -20, "comment": "小明知道咗，覺得你好無恥..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c9-b",
+          "text": "私下同老師說明真實情況",
+          "effects": [
+            { "character": "小明", "change": 20, "moralChange": 25, "comment": "老師讚你誠實，小明多謝你為他發聲！" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c9-c",
+          "text": "主動同小明道歉話「對唔住，我抄咗你」",
+          "effects": [
+            { "character": "小明", "change": 25, "moralChange": 30, "comment": "小明原諒咗你，你感覺肩膀輕咗！" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-c10",
+      "title": "道德關卡：友情與原則",
+      "background": "放學後・樓梯",
+      "description": "你約定咗今日要去補習，但係小明走過話：「我俾人蝦，你唔幫我我就俾人打！」你想遵守約定，但你又唔想朋友受傷。你應該點做？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 65 }
+      ],
+      "hints": [
+        "幫朋友係啱，但係用打人黎報仇係另一回事。",
+        "有啲嘢你控制唔到，但係你可以選擇點樣應對。",
+        "真朋友會理解你有更重要既事情。"
+      ],
+      "options": [
+        {
+          "id": "s-c10-a",
+          "text": "放棄補習，陪佢去處理事件",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": -10, "comment": "你陪佢去但係情況失控，你哋都被人鬧..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c10-b",
+          "text": "先陪佢搵老師處理，先請假補習",
+          "effects": [
+            { "character": "小明", "change": 20, "moralChange": 15, "comment": "老師處理咗件事，小明安全，你補習請假。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-c10-c",
+          "text": "話「我約咗補習，幫你搵老師」就走",
+          "effects": [
+            { "character": "小明", "change": -5, "moralChange": 20, "comment": "小明最初唔高興，但老師幫佢處理好後，他明白你係為咗佢好。" }
+          ],
+          "next_scenario": null
+        }
+      ]
     }
   ],
   "endings": [
@@ -2520,13 +2771,15 @@
     function loadRelationships() {
       const saved = localStorage.getItem('friendly-classroom-v2');
       if (saved) {
-        relationships = JSON.parse(saved);
+        const data = JSON.parse(saved);
+        relationships = data.relationships || {};
+        moral = data.moral !== undefined ? data.moral : 50;
       }
     }
 
     // 儲存關係值
     function saveRelationships() {
-      localStorage.setItem('friendly-classroom-v2', JSON.stringify(relationships));
+      localStorage.setItem('friendly-classroom-v2', JSON.stringify({ relationships, moral }));
     }
 
     // Load/Save Game Stats
@@ -2861,7 +3114,16 @@
             <div class="char-value">${value}%</div>
           </div>
         `;
-      }).join('');
+      }).join('') + `
+        <div class="char-card moral-card">
+          <div class="char-emoji">⚖️</div>
+          <div class="char-name">道德值</div>
+          <div class="char-bar-container">
+            <div class="char-bar-fill ${moral >= 60 ? 'high' : moral >= 30 ? 'medium' : 'low'}" style="width: ${moral}%; background: ${moral >= 60 ? 'var(--green)' : moral >= 30 ? 'var(--yellow)' : 'var(--red)'}"></div>
+          </div>
+          <div class="char-value">${moral}%</div>
+        </div>
+      `;
     }
 
     // 獲取角色emoji - O(1) from cache
@@ -3139,6 +3401,7 @@
 
       // 保存選擇前既關係值（用于重試）
       previousRelationships = JSON.parse(JSON.stringify(relationships));
+      previousMoral = moral;
 
       // 應用效果
       const totalChange = option.effects.reduce((sum, e) => sum + e.change, 0);
@@ -3146,6 +3409,12 @@
         relationships[effect.character] = (relationships[effect.character] || 50) + effect.change;
         relationships[effect.character] = Math.max(-100, Math.min(100, relationships[effect.character]));
       });
+      // 道德值變化（每個effect可選moralChange欄位）
+      let moralChange = 0;
+      option.effects.forEach(effect => {
+        if (effect.moralChange) moralChange += effect.moralChange;
+      });
+      moral = Math.max(0, Math.min(100, moral + moralChange));
       
       // 更新技能點數 - passing scenarioId 同 optionIndex
       updateSkillPoints(option.effects, scenarioId, optionIndex);
@@ -3258,6 +3527,7 @@
       // 恢復關係值到選擇前
       if (previousRelationships) {
         relationships = JSON.parse(JSON.stringify(previousRelationships));
+        moral = previousMoral;
         saveRelationships();
         showRelationships();
         // 移除彈窗
@@ -3275,6 +3545,7 @@
     function checkEnding() {
       console.log('[DEBUG] checkEnding called');
       console.log('[DEBUG] relationships:', relationships);
+      console.log('[DEBUG] moral:', moral);
       console.log('[DEBUG] gameData.endings:', gameData.endings);
       
       const keys = Object.keys(relationships);
@@ -3284,19 +3555,76 @@
       }
       
       const avgRelationship = Object.values(relationships).reduce((a, b) => a + b, 0) / keys.length;
-      console.log('[DEBUG] avgRelationship:', avgRelationship);
+      const relLevel = avgRelationship >= 70 ? 'high' : avgRelationship >= 40 ? 'mid' : 'low';
+      const moralLevel = moral >= 70 ? 'high' : moral >= 40 ? 'mid' : 'low';
 
-      // 搵岩既ending
-      const validEndings = gameData.endings.filter(e => avgRelationship >= e.min_relationship);
-      console.log('[DEBUG] validEndings:', validEndings);
-      
-      if (validEndings.length > 0) {
-        // 搵最高min_relationship既
-        validEndings.sort((a, b) => b.min_relationship - a.min_relationship);
-        showEnding(validEndings[0]);
-      } else {
-        showDefaultEnding();
+      // 9宮格結局系統：關係x道德
+      const endingMap = {
+        'high_high': { rank: 'gold', emoji: '🏆', title: '友誼大使', desc: '你係最受愛戴的人！善良、同理心同誠信兼備，所有人都尊敬你。' },
+        'high_mid':  { rank: 'silver', emoji: '🥈', title: '好朋友', desc: '你係大家都鐘意既好朋友！繼續保持你既善良同熱情～' },
+        'high_low':  { rank: 'bronze', emoji: '🥉', title: '受歡迎但需反省', desc: '你係社交高手，但有時為咗讨好人而失去原則。要記住：真正既友誼建於尊重之上。' },
+        'mid_high':  { rank: 'silver', emoji: '🥈', title: '正直的好人', desc: '你係好人，但太善良令你未建立好友誼。試下大膽啲、主動啲，你會更好！' },
+        'mid_mid':   { rank: 'bronze', emoji: '🥉', title: '普通同學', desc: '你係課室裡面普通既存在...試下主動關心同學，邁出第一步啦！' },
+        'mid_low':   { rank: 'bronze', emoji: '🥉', title: '需要改善', desc: '你既行為有問題...但係冇關係，每個人也會成長既！' },
+        'low_high':  { rank: 'bronze', emoji: '🥉', title: '被誤解的好人', desc: '你其實係好人，但太固執或者唔識表达...學習改善溝通方式啦。' },
+        'low_mid':   { rank: 'bronze', emoji: '🥉', title: '孤獨者', desc: '你身邊冇咩朋友...但係你仲有機會！主動啲走出舒適圈啦。' },
+        'low_low':   { rank: 'bronze', emoji: '🥉', title: '需大力改善', desc: '你既行為伤害咗身邊既人...但係每一個人改過都係值得俾機會既。' }
+      };
+
+      const ending = endingMap[`${relLevel}_${moralLevel}`] || endingMap['mid_mid'];
+      showEndingWithMoral(ending, avgRelationship);
+    }
+
+    // 顯示道德結局
+    function showEndingWithMoral(ending, avgRelationship) {
+      const gameArea = document.getElementById('game-area');
+      const playerName = getPlayerName();
+      const today = new Date().toLocaleDateString('zh-HK');
+
+      AudioSys.complete();
+      gameStats.gamesPlayed++;
+      gameStats.totalScore += avgRelationship;
+      if (avgRelationship > gameStats.bestScore) gameStats.bestScore = avgRelationship;
+      finalizeGame(avgRelationship, currentScenario?.id);
+
+      // 學習要點（包含道德）
+      let learningPoints = [];
+      for (const [name, value] of Object.entries(relationships)) {
+        if (value >= 70) learningPoints.push(`✨ 你同 ${name} 建立咗非常好既友誼！`);
+        else if (value >= 40) learningPoints.push(`💪 你同 ${name} 既關係幾好，繼續努力！`);
+        else if (value >= 0) learningPoints.push(`💭 你同 ${name} 既關係有待改善`);
+        else learningPoints.push(`💔 你同 ${name} 既關係受損咗...`);
       }
+      if (moral >= 70) learningPoints.push(`⚖️ 你的道德水平很高！善良既選擇會感染身邊既人。`);
+      else if (moral >= 40) learningPoints.push(`⚖️ 你的道德水平中等，還有進步空間。`);
+      else learningPoints.push(`⚠️ 你的道德水平需要改善...記住真正既力量來自內心。`);
+
+      gameArea.innerHTML = `
+        <div class="ending-card">
+          <div class="cert ${ending.rank}" style="margin-bottom:30px;">
+            <div class="cert-title">🎓 友誼教室證書</div>
+            <div class="cert-rank">${ending.emoji} ${ending.title}</div>
+            <div class="cert-name">${playerName}</div>
+            <div style="color:var(--cream);font-size:14px;">${ending.desc}</div>
+            <div class="cert-stats">
+              <p>平均好感度：<strong style="color:var(--yellow);">${Math.round(avgRelationship)}</strong></p>
+              <p>道德值：<strong style="color:var(--yellow);">${moral}</strong></p>
+              <p>總遊戲次數：${gameStats.gamesPlayed} | 最佳連續：${gameStats.bestStreak}</p>
+            </div>
+            <div class="cert-date">頒發日期：${today}</div>
+          </div>
+          <div style="margin:20px 0;">
+            <p style="color:var(--cream);font-size:14px;">📊 技能進度：</p>
+            ${showSkillProgress()}
+          </div>
+          ${showConceptCards()}
+          <div class="ending-title">🏆 遊戲完成！</div>
+          <div class="ending-desc">你已完成所有關卡！</div>
+          <div class="learning-points">${learningPoints.map(p => `<p>${p}</p>`).join('')}</div>
+          <button class="home-btn" onclick="restartGame()">🔄 再玩一次</button>
+          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+        </div>
+      `;
     }
     
     // 顯示預設結局（如果冇既話）
@@ -3521,6 +3849,7 @@
     // 重新開始
     function restartGame() {
       relationships = {};
+      moral = 50;
       completedScenarios = [];
       currentScenarioNum = 0;
       saveRelationships();
