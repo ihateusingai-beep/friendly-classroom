@@ -40,8 +40,12 @@
       --yellow: #ffd93f;
       --red: #e83838;
       --green: #4caf50;
+      --blue: #64B5F6;
       --white: #fff8e0;
       --shadow: #1a0f07;
+      --gold: #ffd700;
+      --silver: #c0c0c0;
+      --bronze: #cd7f32;
     }
 
     * {
@@ -247,6 +251,7 @@
       background: var(--bg-light);
       transform: translate(-2px, -2px);
       box-shadow: 4px 4px 0 var(--shadow);
+      cursor: pointer;
     }
 
     .option-btn:active {
@@ -269,8 +274,8 @@
       margin-left: 8px;
       vertical-align: middle;
     }
-    .warn-positive { color: #4caf50; border: 2px solid #4caf50; }
-    .warn-negative { color: #e83838; border: 2px solid #e83838; }
+    .warn-positive { color: var(--green); border: 2px solid var(--green); }
+    .warn-negative { color: var(--red); border: 2px solid var(--red); }
     .warn-neutral { color: #aaa; border: 2px solid #aaa; }
 
     /* 結果彈窗 */
@@ -311,8 +316,8 @@
       color: var(--yellow);
       margin-bottom: 20px;
     }
-    .feedback-title.title-positive { color: #4ade80; text-shadow: 2px 2px 0 #166534; }
-    .feedback-title.title-negative { color: #f87171; text-shadow: 2px 2px 0 #991b1b; }
+    .feedback-title.title-positive { color: var(--green); text-shadow: 2px 2px 0 #166534; }
+    .feedback-title.title-negative { color: var(--red); text-shadow: 2px 2px 0 #991b1b; }
 
     .change-amount {
       font-family: 'Press Start 2P', monospace;
@@ -413,8 +418,8 @@
 
     .hint-tier-btn.tier-1 {
       background: rgba(100, 181, 246, 0.15);
-      border-color: #64B5F6;
-      color: #64B5F6;
+      border-color: var(--blue);
+      color: var(--blue);
     }
 
     .hint-tier-btn.tier-2 {
@@ -425,8 +430,8 @@
 
     .hint-tier-btn.tier-3 {
       background: rgba(239, 83, 80, 0.15);
-      border-color: #EF5350;
-      color: #EF5350;
+      border-color: var(--red);
+      color: var(--red);
     }
 
     .hint-tier-btn.active {
@@ -474,9 +479,9 @@
 
     .hint-box.tier-1 {
       background: rgba(100, 181, 246, 0.08);
-      border-color: #64B5F6;
+      border-color: var(--blue);
       border-style: dotted;
-      color: #64B5F6;
+      color: var(--blue);
     }
 
     .hint-box.tier-2 {
@@ -489,8 +494,8 @@
     .hint-box.tier-3 {
       background: rgba(239, 83, 80, 0.12);
       border-style: solid;
-      border-color: #EF5350;
-      color: #EF5350;
+      border-color: var(--red);
+      color: var(--red);
     }
 
     .hint-box.show {
@@ -658,7 +663,6 @@
     .location-selection { margin: 20px 0; }
     .location-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
     .location-btn { background: var(--bg-mid); border: 3px solid var(--cream-dark); color: var(--cream); padding: 12px 20px; font-family: 'Noto Sans HK', sans-serif; font-size: 14px; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
-    .option-btn:hover { background: var(--bg-light); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--shadow); cursor: pointer; }
     .option-btn:hover::before { color: var(--green); }
 
     /* Option wrapper + speak button */
@@ -1070,9 +1074,9 @@
       max-width: 500px;
       margin: 0 auto;
     }
-    .cert.gold { border-color: #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
-    .cert.silver { border-color: #c0c0c0; box-shadow: 0 0 30px rgba(192, 192, 192, 0.4); }
-    .cert.bronze { border-color: #cd7f32; box-shadow: 0 0 25px rgba(205, 127, 50, 0.4); }
+    .cert.gold { border-color: var(--gold); box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+    .cert.silver { border-color: var(--silver); box-shadow: 0 0 30px rgba(192, 192, 192, 0.4); }
+    .cert.bronze { border-color: var(--bronze); box-shadow: 0 0 25px rgba(205, 127, 50, 0.4); }
     .cert-title { font-size: 28px; color: var(--yellow); margin-bottom: 20px; }
     .cert-name { font-size: 24px; color: var(--cream); margin: 20px 0; border-bottom: 2px solid var(--cream); padding: 10px; }
     .cert-rank { font-size: 48px; margin: 20px 0; }
@@ -1164,22 +1168,22 @@
         <div class="location-selection">
           <p style="color:var(--cream);font-size:14px;margin:20px 0 10px;">選擇情景：</p>
           <div class="location-buttons">
-            <button class="location-btn" onclick="startGame('classroom')">🏫 課室</button>
-            <button class="location-btn" onclick="startGame('break')">🌸 小息</button>
-            <button class="location-btn" onclick="startGame('home')">🏠 放學後家中</button>
+            <button class="location-btn" onclick="startGame('classroom')" aria-label="開始課室場景">🏫 課室</button>
+            <button class="location-btn" onclick="startGame('break')" aria-label="開始小息場景">🌸 小息</button>
+            <button class="location-btn" onclick="startGame('home')" aria-label="開始放學後家中場景">🏠 放學後家中</button>
           </div>
         </div>
         
-        <button class="start-btn" onclick="startGame('random')">🎲 隨機開始</button>
+        <button class="start-btn" onclick="startGame('random')" aria-label="隨機開始遊戲">🎲 隨機開始</button>
       </div>
     </div>
   </div>
 
   <!-- Settings Panel -->
-  <button class="settings-toggle" onclick="toggleSettings()">⚡ 設定</button>
+  <button class="settings-toggle" onclick="toggleSettings()" aria-label="開啟設定面板">⚡ 設定</button>
   
   <div class="settings-panel" id="settings-panel">
-    <button class="settings-close" onclick="toggleSettings()">×</button>
+    <button class="settings-close" onclick="toggleSettings()" aria-label="關閉設定面板">×</button>
     <h2>⚡ 設定</h2>
     
     <div class="settings-section">
@@ -1239,9 +1243,9 @@
     <h2>📝 編輯情景庫 (JSON)</h2>
     <textarea id="json-editor"></textarea>
     <div style="margin-top:10px">
-    <button onclick="saveScenarios()">💾 儲存</button>
-    <button onclick="toggleAdmin()">❌ 取消</button>
-    <button onclick="resetGame()">🏠 回首頁</button>
+    <button onclick="saveScenarios()" aria-label="儲存設定">💾 儲存</button>
+    <button onclick="toggleAdmin()" aria-label="取消編輯">❌ 取消</button>
+    <button onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
     </div>
   </div>
 
@@ -3277,7 +3281,7 @@
             <div style="display:flex;flex-direction:column;gap:10px;">
               ${leaderboard.map((entry, i) => {
                 const rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-                const rankColor = i === 0 ? 'var(--yellow)' : i === 1 ? '#c0c0c0' : i === 2 ? '#cd7f32' : 'var(--cream)';
+                const rankColor = i === 0 ? 'var(--gold)' : i === 1 ? 'var(--silver)' : i === 2 ? 'var(--bronze)' : 'var(--cream)';
                 return `
                   <div style="display:flex;align-items:center;gap:10px;background:var(--bg-dark);border:3px solid ${rankColor};border-radius:8px;padding:10px 15px;">
                     <div style="font-size:24px;">${rank}</div>
@@ -3294,7 +3298,7 @@
               }).join('')}
             </div>
           `}
-          <button class="home-btn" onclick="resetGame()" style="margin-top:20px;">🏠 回首頁</button>
+          <button class="home-btn" onclick="resetGame()" style="margin-top:20px;" aria-label="返回首頁">🏠 回首頁</button>
         </div>
       `;
     }
@@ -3302,7 +3306,6 @@
 
     // 開始遊戲
     function startGame(location) {
-      console.log('[DEBUG] startGame called with location:', location);
       location = location || 'random';
       
       // Capture player name at game start
@@ -3315,7 +3318,6 @@
         
         // 确保 gameData 已加载
         if (!gameData.scenarios || gameData.scenarios.length === 0) {
-          console.log('[DEBUG] Loading scenarios...');
           loadScenarios();
         }
         
@@ -3347,9 +3349,7 @@
         showRelationships();
         showScenario(firstScenario);
         
-        console.log('[DEBUG] Game started successfully');
       } catch (e) {
-        console.error('[ERROR] startGame:', e);
         alert('Error: ' + e.message);
       }
     }
@@ -3480,15 +3480,15 @@
           `}
           
           <div class="question-tools">
-            <button class="tool-btn" onclick="speakText(event)">🔊 讀一次</button>
-            <button class="tool-btn" onclick="showHint(event)">💡 提示</button>
+            <button class="tool-btn" onclick="speakText(event)" aria-label="朗讀文字">🔊 讀一次</button>
+            <button class="tool-btn" onclick="showHint(event)" aria-label="顯示提示">💡 提示</button>
           </div>
           
           <div class="hint-container" id="hint-container">
             <div class="hint-tiers">
-              <button class="hint-tier-btn tier-1" onclick="showHintTier(1)" title="輕微提示">💡 Tier 1</button>
-              <button class="hint-tier-btn tier-2 locked" onclick="showHintTier(2)" title="中度提示">💡💡 Tier 2</button>
-              <button class="hint-tier-btn tier-3 locked" onclick="showHintTier(3)" title="完整答案">💡💡💡 Tier 3</button>
+              <button class="hint-tier-btn tier-1" onclick="showHintTier(1)" title="輕微提示" aria-label="顯示輕微提示">💡 Tier 1</button>
+              <button class="hint-tier-btn tier-2 locked" onclick="showHintTier(2)" title="中度提示" aria-label="顯示中度提示">💡💡 Tier 2</button>
+              <button class="hint-tier-btn tier-3 locked" onclick="showHintTier(3)" title="完整答案" aria-label="顯示完整答案">💡💡💡 Tier 3</button>
             </div>
             <div class="hint-box" id="hint-box">
               ${scenario.hints?.[0] || scenario.hint || '試下諗下，如果係你，你會點樣做？'}
@@ -3502,16 +3502,16 @@
               const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
               return `
               <div class="option-wrapper">
-                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
+                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();" aria-label="選擇選項${['A', 'B', 'C'][i]}">
                   <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
                   ${warnIcon ? `<span class="moral-warn ${warnClass}">${warnIcon}</span>` : ''}
                 </button>
-                <button class="option-speak-btn" onclick="speakTextDirect('${opt.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="讀出呢個選項">🔊</button>
+                <button class="option-speak-btn" onclick="speakTextDirect('${opt.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="讀出呢個選項" aria-label="朗讀選項文字">🔊</button>
               </div>
             `}).join('')}
           </div>
 
-          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+          <button class="home-btn" onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
         </div>
       `;
     }
@@ -3563,14 +3563,12 @@
             btn?.classList.remove('speaking'); 
           };
           utterance.onerror = (e) => { 
-            console.log('TTS error:', e);
             window.__ttsSpeaking = false;
             btn?.classList.remove('speaking'); 
           };
           speechSynthesis.speak(utterance);
         }
       } catch(err) {
-        console.error('speakText error:', err);
         window.__ttsSpeaking = false;
       }
     }
@@ -3801,7 +3799,7 @@
             <div class="feedback-stage stage-consequence">
               <div class="feedback-title ${colorClass}">${epicTitle}</div>
               <div class="result-comment">${comments}</div>
-              <button class="continue-btn" onclick="showGuidanceTip(this)">睇下點樣做得更好 💡</button>
+              <button class="continue-btn" onclick="showGuidanceTip(this)" aria-label="查看如何改進">睇下點樣做得更好 💡</button>
             </div>
             
             <div class="feedback-stage stage-guidance" style="display:none;">
@@ -3810,10 +3808,10 @@
                 記住呀，每個人都應該被尊重同關心～
                 <br>如果見到有人唔開心，可以問下佢發生咩事！
               </div>
-              <button class="continue-btn blink" onclick="finishFeedback(this)">繼續 ▶</button>
+              <button class="continue-btn blink" onclick="finishFeedback(this)" aria-label="繼續遊戲">繼續 ▶</button>
             </div>
             
-            <button class="retry-btn" onclick="retryChoice()">🔄 我想再想想</button>
+            <button class="retry-btn" onclick="retryChoice()" aria-label="重新選擇">🔄 我想再想想</button>
           </div>
         </div>
       `;
@@ -3856,10 +3854,6 @@
 
     // 檢查結局
     function checkEnding() {
-      console.log('[DEBUG] checkEnding called');
-      console.log('[DEBUG] relationships:', relationships);
-      console.log('[DEBUG] moral:', moral);
-      console.log('[DEBUG] gameData.endings:', gameData.endings);
       
       const keys = Object.keys(relationships);
       if (keys.length === 0) {
@@ -3939,7 +3933,7 @@
             </div>` : ''}
             <div class="cert-date">頒發日期：${today}</div>
           </div>
-          <button class="home-btn" onclick="showLeaderboard()" style="margin-top:15px;">🏆 睇排行榜</button>
+          <button class="home-btn" onclick="showLeaderboard()" style="margin-top:15px;" aria-label="查看排行榜">🏆 睇排行榜</button>
           <div style="margin:20px 0;">
             <p style="color:var(--cream);font-size:14px;">📊 技能進度：</p>
             ${showSkillProgress()}
@@ -3948,8 +3942,8 @@
           <div class="ending-title">🏆 遊戲完成！</div>
           <div class="ending-desc">你已完成所有關卡！</div>
           <div class="learning-points">${learningPoints.map(p => `<p>${p}</p>`).join('')}</div>
-          <button class="home-btn" onclick="restartGame()">🔄 再玩一次</button>
-          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+          <button class="home-btn" onclick="restartGame()" aria-label="重新開始遊戲">🔄 再玩一次</button>
+          <button class="home-btn" onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
         </div>
       `;
     }
@@ -4039,8 +4033,8 @@
             <p style="color:var(--cream);font-size:14px;margin-top:20px;">📚 學習要點：</p>
             ${learningPoints.map(p => `<p style="color:var(--yellow);font-size:13px;margin:10px 0;">${p}</p>`).join('')}
           </div>
-          <button class="restart-btn" onclick="restartGame()">🔄 重新開始</button>
-          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+          <button class="restart-btn" onclick="restartGame()" aria-label="重新開始遊戲">🔄 重新開始</button>
+          <button class="home-btn" onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
         </div>
       `;
     }
@@ -4167,8 +4161,8 @@
             <p style="color:var(--cream);font-size:14px;margin-top:20px;">📚 學習要點：</p>
             ${learningPoints.map(p => `<p style="color:var(--yellow);font-size:13px;margin:10px 0;">${p}</p>`).join('')}
           </div>
-          <button class="restart-btn" onclick="restartGame()">🔄 重新開始</button>
-          <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
+          <button class="restart-btn" onclick="restartGame()" aria-label="重新開始遊戲">🔄 重新開始</button>
+          <button class="home-btn" onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
         </div>
       `;
     }
