@@ -3738,7 +3738,7 @@
         gameArea.classList.add('positive-flash');
         setTimeout(() => gameArea.classList.remove('positive-flash'), 500);
       } else if (totalChange < 0) {
-        SoundEngine.wrong();
+        AudioSys.fail();
         triggerShake();
         gameArea.classList.add('negative-flash');
         setTimeout(() => gameArea.classList.remove('negative-flash'), 400);
