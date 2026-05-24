@@ -2784,6 +2784,119 @@
           "next_scenario": null
         }
       ]
+    },
+    {
+      "id": "s-door1",
+      "title": "特別關卡：教室門口",
+      "background": "課室・門口",
+      "description": "放學時，大家爭住冲出去。門口有兩個人：一個係要出去既同學，另一個係老師。老師話：「排隊，先出先後。」但前面既小明話：「我趕時間！」然後衝埋去門口。你呢？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-door1-a",
+          "text": "跟小明一齊衝出去",
+          "effects": [
+            { "character": "小明", "change": 10, "moralChange": -20, "comment": "小明話：「你係我朋友！」但老師皺眉...你學壞咗。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door1-b",
+          "text": "排隊，等候老師指示",
+          "effects": [
+            { "character": "小明", "change": -10, "moralChange": 15, "comment": "老師點頭話：「乖。」小明走咗過話：「你唔夠朋友呀！」但你做咗啱嘅嘢。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door1-c",
+          "text": "幫老師叫大家排隊",
+          "effects": [
+            { "character": "小明", "change": -5, "moralChange": 25, "comment": "同學們開始排隊，小明望住你：「你做組長呀？」老師話：「好孩子！」" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-door2",
+      "title": "特別關卡：門與安全",
+      "background": "走廊・樓梯口",
+      "description": "你見到祝卓鋒（一位對門好有興趣既同學）喺走廊度爬嚟爬去，仲拉住門邊既欄杆。你知道門好快就會開，呢個係危險行為。你應該點做？",
+      "characters": [
+        { "name": "祝卓鋒", "emoji": "🚪", "initial_relationship": 50 }
+      ],
+      "hints": [
+        "試下留意周圍環境...",
+        "門附近要小心，唔好爬嚟爬去...",
+        "可以輕輕提醒佢門就嚟開，等佢注意安全"
+      ],
+      "options": [
+        {
+          "id": "s-door2-a",
+          "text": "走埋去話：「祝卓鋒，門就嚟開喇，小心呀！」",
+          "effects": [
+            { "character": "祝卓鋒", "change": 30, "moralChange": 25, "comment": "祝卓鋒即刻停低，望住你：「你點知？」你話：「我見到你爬嚟爬去，擔心你整傷。」佢笑咗：「多謝你！」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door2-b",
+          "text": "行開當睇唔到（因為話俾佢知可能會得罪佢）",
+          "effects": [
+            { "character": "祝卓鋒", "change": 0, "moralChange": -10, "comment": "門突然打開，祝卓鋒整傷咗手指...你心裡有少少內咎，如果你早啲提醒佢就好..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door2-c",
+          "text": "立即走去通知老師",
+          "effects": [
+            { "character": "祝卓鋒", "change": -15, "moralChange": 15, "comment": "老師即時趕到制止咗危險情況，但祝卓鋒有少少唔高興：「你通知老師？」..." }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-door3",
+      "title": "特別關卡：開門與關門",
+      "background": "課室・午休",
+      "description": "午休時，你見到門係開住，但外面好嘈，有啲同學喺走廊跑嚟跑去。風吹啲紙張周圍飛。老師未返課室。你應該點做？",
+      "characters": [],
+      "hints": [
+        "紙張飛嚟飞去，門開住...",
+        "你可以自己決定，但小心唔好令其他同學覺得你管太多...",
+        "你可以行去閂門，幫手執紙張"
+      ],
+      "options": [
+        {
+          "id": "s-door3-a",
+          "text": "行去閂門，然後幫手執紙張",
+          "effects": [
+            { "character": "小明", "change": 5, "moralChange": 20, "comment": "你輕輕閂上門，執起啲紙張。其他同學望住你，有人話：「你幾好喎。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door3-b",
+          "text": "自己走去閂門，唔理其他同學",
+          "effects": [
+            { "character": "小明", "change": 10, "moralChange": -5, "comment": "你閂埋門，但同學話：「你做嘢呀？我哋仲要出去！」你只係為咗自己舒服..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door3-c",
+          "text": "坐返低，等老師返嚟先",
+          "effects": [
+            { "character": "小明", "change": 0, "moralChange": 0, "comment": "你坐返低，老師好快就返嚟。老師自己閂咗門，執起啲紙張。你冇做錯，但都冇幫手。" }
+          ],
+          "next_scenario": null
+        }
+      ]
     }
   ],
   "endings": [
