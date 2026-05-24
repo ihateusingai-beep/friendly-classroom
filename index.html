@@ -3464,10 +3464,18 @@
       // Get hint content for this tier (0-indexed array access)
       const hintIndex = tier - 1;
       const hintContent = hints[hintIndex] || hints[hints.length - 1] || '試下諗下，如果係你，你會點樣做？';
+      const tierLabel = tier === 1 ? '💡 輕輕暗示' : tier === 2 ? '💡💡 道德提示' : '💡💡💡 行動建議';
+      const tierDesc = tier === 1 ? '輕輕提示方向...' : tier === 2 ? '呢個選擇關乎...?' : '建議選擇：';
 
       // Update hint box with tier class and content
       hintBox.className = 'hint-box show tier-' + tier;
-      hintBox.innerHTML = `<div class="hint-text-tier current">${hintContent}</div>`;
+      hintBox.innerHTML = `
+        <div class="hint-text-tier current">
+          <div style="color:var(--yellow);font-size:12px;margin-bottom:8px;">${tierLabel}</div>
+          <div style="font-size:13px;">${tierDesc}</div>
+          <div style="margin-top:8px;">${hintContent}</div>
+        </div>
+      `;
 
       // Play hint sound
       AudioSys.click();
