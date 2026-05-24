@@ -1239,6 +1239,20 @@
     let currentScenarioNum = 0;
     let totalScenarios = 0; // 動態計算
     let completedScenarios = [];
+
+    // 道德徽章系統
+    let badges = []; // 已獲得的徽章ID列表
+    const BADGE_DEFS = [
+      { id: 'honest', emoji: '💚', name: '誠實章', desc: '選擇坦誠嘅行為', condition: (st) => st.honestChoices >= 2 },
+      { id: 'brave', emoji: '⚡', name: '道德勇氣章', desc: '為正道挺身而出', condition: (st) => st.braveChoices >= 1 },
+      { id: 'kind', emoji: '🌟', name: '善良章', desc: '主動關心帮助他人', condition: (st) => st.kindChoices >= 3 },
+      { id: 'fair', emoji: '⚖️', name: '公平章', desc: '堅守原則不偏私', condition: (st) => st.fairChoices >= 2 },
+      { id: 'growth', emoji: '🚀', name: '成長章', desc: '勇於承認過錯並改正', condition: (st) => st.growthChoices >= 1 },
+      { id: 'champion', emoji: '🏆', name: '友誼大使章', desc: '道德值達到90或以上', condition: (st) => st.moral >= 90 },
+      { id: 'friendmaker', emoji: '❤️', name: '社交高手章', desc: '平均關係值達到80或以上', condition: (st) => st.avgRel >= 80 }
+    ];
+    // 追蹤統計
+    let choiceStats = { honestChoices: 0, braveChoices: 0, kindChoices: 0, fairChoices: 0, growthChoices: 0 };
     
     // Settings
     let settings = {
@@ -2835,7 +2849,7 @@
   // 智能 skill mapping - 根據 scenario 主題同選項 index 決定
   // Option C (index=2) 通常係最佳選擇 -> 主要增加 skills
   // Option A/B -> 較少或隨機
-  
+
   const skillThemeMap = {
     's1': 'respect',    // 嘲笑→尊重
     's2': 'honesty',    // 匿贓→誠實
@@ -2846,6 +2860,16 @@
     's7': 'empathy',  // 安慰→同理心
     's8': 'courage'  // 主動→勇氣
   };
+
+  // 追蹤道德選擇統計（給徽章用）
+  const moralChange = effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
+  if (moralChange > 0) {
+    if (scenarioId === 's2' || scenarioId === 's4' || scenarioId === 's-c8') choiceStats.honestChoices++;
+    if (scenarioId === 's-c5' || scenarioId === 's-c6') choiceStats.braveChoices++;
+    if (scenarioId === 's3' || scenarioId === 's5' || scenarioId === 's7') choiceStats.kindChoices++;
+    if (scenarioId === 's-c5' || scenarioId === 's-c7') choiceStats.fairChoices++;
+    if (scenarioId === 's4' || scenarioId === 's-c8') choiceStats.growthChoices++;
+  }
 
   effects.forEach(effect => {
     if (effect.change > 0) {
@@ -3026,7 +3050,7 @@
     // Show badge notification
     function showBadgeNotification(badge) {
       AudioSys.badge(); // Play badge sound
-      
+
       const gameArea = document.getElementById('game-area');
       const existing = document.querySelector('.badge-notification');
       if (existing) existing.remove();
@@ -3041,6 +3065,29 @@
       `;
       document.body.appendChild(notif);
       setTimeout(() => notif.remove(), 3000);
+    }
+
+    // 檢查並頒發道德徽章（每次選擇後調用）
+    function checkMoralBadges() {
+      const avgRel = Object.keys(relationships).length > 0
+        ? Object.values(relationships).reduce((a, b) => a + b, 0) / Object.keys(relationships).length
+        : 50;
+      const stats = { ...choiceStats, moral, avgRel };
+      BADGE_DEFS.forEach(def => {
+        if (!badges.includes(def.id) && def.condition(stats)) {
+          badges.push(def.id);
+          const notif = document.createElement('div');
+          notif.className = 'badge-notification';
+          notif.innerHTML = `
+            <div style="position:fixed;top:20px;right:20px;background:var(--yellow);padding:15px 25px;border-radius:10px;
+                 color:var(--bg-dark);font-size:18px;z-index:200;animation:slideIn 0.5s ease;border:3px solid var(--orange);">
+              🎖️ 道德徽章: ${def.emoji} ${def.name}!<br><span style="font-size:12px">${def.desc}</span>
+            </div>
+          `;
+          document.body.appendChild(notif);
+          setTimeout(() => notif.remove(), 4000);
+        }
+      });
     }
 
     // Add slideIn animation
@@ -3484,6 +3531,7 @@
 
       saveRelationships();
       showRelationships();
+      checkMoralBadges(); // 檢查道德徽章
 
       showResult(option.effects, () => {
         const nextId = option.next_scenario;
@@ -3656,6 +3704,16 @@
               <p>道德值：<strong style="color:var(--yellow);">${moral}</strong></p>
               <p>總遊戲次數：${gameStats.gamesPlayed} | 最佳連續：${gameStats.bestStreak}</p>
             </div>
+            ${badges.length > 0 ? `
+            <div style="margin:15px 0;">
+              <p style="color:var(--yellow);font-size:14px;">🎖️ 獲得道德徽章：</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px;">
+                ${badges.map(id => {
+                  const b = BADGE_DEFS.find(d => d.id === id);
+                  return b ? `<span style="background:var(--bg-dark);border:2px solid var(--yellow);padding:6px 10px;border-radius:8px;font-size:16px;" title="${b.desc}">${b.emoji} ${b.name}</span>` : '';
+                }).join('')}
+              </div>
+            </div>` : ''}
             <div class="cert-date">頒發日期：${today}</div>
           </div>
           <div style="margin:20px 0;">
