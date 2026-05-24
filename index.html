@@ -261,6 +261,18 @@
       margin-right: 10px;
     }
 
+    .moral-warn {
+      font-size: 11px;
+      font-family: 'Press Start 2P', monospace;
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .warn-positive { color: #4caf50; border: 2px solid #4caf50; }
+    .warn-negative { color: #e83838; border: 2px solid #e83838; }
+    .warn-neutral { color: #aaa; border: 2px solid #aaa; }
+
     /* 結果彈窗 */
     .result-overlay {
       display: none;
@@ -3209,14 +3221,19 @@
           </div>
           
           <div class="options">
-            ${scenario.options.map((opt, i) => `
+            ${scenario.options.map((opt, i) => {
+              const moralChange = opt.effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
+              const warnIcon = moralChange > 0 ? '⚠️+'+moralChange : moralChange < 0 ? '⚠️'+moralChange : '';
+              const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
+              return `
               <div class="option-wrapper">
                 <button class="option-btn" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();">
                   <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
+                  ${warnIcon ? `<span class="moral-warn ${warnClass}">${warnIcon}</span>` : ''}
                 </button>
                 <button class="option-speak-btn" onclick="speakTextDirect('${opt.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="讀出呢個選項">🔊</button>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
 
           <button class="home-btn" onclick="resetGame()">🏠 回首頁</button>
