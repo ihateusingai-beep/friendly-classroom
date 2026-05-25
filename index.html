@@ -1236,6 +1236,11 @@
         開啟後：每關只顯示兩個選項<br>適合特殊教育學生
       </div>
     </div>
+
+    <div class="settings-section" id="weekly-progress-section">
+      <span class="settings-label">📅 每週進度</span>
+      <div id="weekly-progress-display" style="margin-top:10px;"></div>
+    </div>
   </div>
 
   <!-- Admin Panel -->
@@ -1405,8 +1410,38 @@
       perfectGames: 0, // all positive choices
       badges: [], // earned badges
       skills: { empathy: 0, respect: 0, courage: 0, honesty: 0, kindness: 0, communication: 0 }, // 6核心友誼技能
-      unlockedConcepts: [] // 解鎖既概念卡
+      unlockedConcepts: [], // 解鎖既概念卡
+      streakCorrect: 0, // 連續答對關卡數
+      scenariosCompleted: 0, // 已完成關卡數
+      totalScenarios: 15, // 總關卡數（會動態更新）
+      moralBest: 0 // 最高道德積分
     };
+
+    // 每週進度追蹤
+    const WEEKLY_KEY = 'fc-weekly-progress';
+    function getWeeklyProgress() {
+      const data = localStorage.getItem(WEEKLY_KEY);
+      if (!data) return { week: getWeekNumber(), completed: 0, moralEarned: 0, totalMoral: 0 };
+      const parsed = JSON.parse(data);
+      const currentWeek = getWeekNumber();
+      if (parsed.week !== currentWeek) return { week: currentWeek, completed: 0, moralEarned: 0, totalMoral: 0 };
+      return parsed;
+    }
+    function saveWeeklyProgress(progress) {
+      localStorage.setItem(WEEKLY_KEY, JSON.stringify(progress));
+    }
+    function getWeekNumber() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 1);
+      return Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
+    }
+    function updateWeeklyProgress(scenariosDone, moralChange) {
+      const progress = getWeeklyProgress();
+      progress.completed += scenariosDone || 0;
+      progress.moralEarned += moralChange > 0 ? moralChange : 0;
+      progress.totalMoral += moralChange || 0;
+      saveWeeklyProgress(progress);
+    }
 
     // 6大核心友誼技能定義
     const SKILLS = {
@@ -1464,7 +1499,13 @@
       
       // 多技能組合 badges
       { id: 'balanced_friend', name: '平衡發展', emoji: '⚖️', desc: '擁有 3 種以上技能', condition: (stats) => Object.values(stats.skills || {}).filter(s => s >= 1).length >= 3 },
-      { id: 'all_rounder', name: '全能好友', emoji: '🌈', desc: '擁有 5 種以上技能', condition: (stats) => Object.values(stats.skills || {}).filter(s => s >= 1).length >= 5 }
+      { id: 'all_rounder', name: '全能好友', emoji: '🌈', desc: '擁有 5 種以上技能', condition: (stats) => Object.values(stats.skills || {}).filter(s => s >= 1).length >= 5 },
+
+      // 新增成就徽章
+      { id: 'streak_3_ach', name: '三連關', emoji: '🔱', desc: '連續答對 3 關', condition: (stats) => (stats.streakCorrect || 0) >= 3 },
+      { id: 'completed_10', name: '十關達人', emoji: '🎯', desc: '完成 10 關', condition: (stats) => (stats.scenariosCompleted || 0) >= 10 },
+      { id: 'completed_all', name: '全情景通', emoji: '📜', desc: '完成所有情景', condition: (stats) => (stats.scenariosCompleted || 0) >= (stats.totalScenarios || 15) },
+      { id: 'moral达标', name: '道德達標', emoji: '⚖️', desc: '道德積分達標 (≥80)', condition: (stats) => (stats.moralBest || 0) >= 80 }
     ];
     
     // Cache for character emojis
@@ -2905,6 +2946,133 @@
           "next_scenario": null
         }
       ]
+    },
+    {
+      "id": "s-door4",
+      "title": "特別關卡：老師開門遲到",
+      "background": "課室・門口",
+      "description": "放學時，老師遲遲未開門。大家喺門口等緊，好嘈吵。小明話：「不如我自己開啦！」但老師未允許。你點睇？",
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 50 },
+        { "name": "老師", "emoji": "👩‍🏫", "initial_relationship": 60 }
+      ],
+      "hints": [
+        "老師可能有原因...耐心等候係一種尊重",
+        "未經允許就自己行動，可能會影響紀律...",
+        "排隊等候、服從指示係紀律既表現"
+      ],
+      "options": [
+        {
+          "id": "s-door4-a",
+          "text": "跟小明一齊自己開門",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": -15, "comment": "小明話：「你係我朋友！」但老師見到皺眉，你學壞咗。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door4-b",
+          "text": "勸小明等老師指示，服從安排",
+          "effects": [
+            { "character": "小明", "change": -5, "moralChange": 15, "comment": "小明話：「你唔夠朋友呀！」但老師點頭話：「乖。」你做咗啱嘅嘢。" },
+            { "character": "老師", "change": 10, "moralChange": 5, "comment": "老師話：「好孩子，有紀律。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door4-c",
+          "text": "主動話：「小明，等老師啦，我哋排隊」",
+          "effects": [
+            { "character": "小明", "change": 5, "moralChange": 20, "comment": "小明望住你，有人跟住排隊。老師話：「好孩子！」" },
+            { "character": "老師", "change": 15, "moralChange": 10, "comment": "老師及時開門，讚賞你既耐心。" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-door5",
+      "title": "特別關卡：自己嘗試開門",
+      "background": "走廊・午休",
+      "description": "午休時，課室門鎖咗。你想入去拎書，但老師唔喺附近。祝卓鋒話：「我可以幫你開門，我好鍾意整門！」",
+      "characters": [
+        { "name": "祝卓鋒", "emoji": "🚪", "initial_relationship": 55 }
+      ],
+      "hints": [
+        "未經允許就開門，可能係好奇心用錯咗地方...",
+        "試下問其他老師或者等老師返嚟...",
+        "遵守規則係成熟既表現"
+      ],
+      "options": [
+        {
+          "id": "s-door5-a",
+          "text": "多謝祝卓鋒，等佢幫你開門",
+          "effects": [
+            { "character": "祝卓鋒", "change": 20, "moralChange": -10, "comment": "祝卓鋒開咗門，但門鎖弄壞咗。老師知道後批評咗你哋..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door5-b",
+          "text": "話：「唔好喇，我哋等老師返嚟先」",
+          "effects": [
+            { "character": "祝卓鋒", "change": -5, "moralChange": 20, "comment": "祝卓鋒有啲失望，但老師返嚟後讚你守規矩。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door5-c",
+          "text": "主動走去搵老師，問可唔可以開門",
+          "effects": [
+            { "character": "祝卓鋒", "change": 5, "moralChange": 25, "comment": "老師幫你開門，話：「好孩子，好懂事！」祝卓鋒望見學懂咗。" }
+          ],
+          "next_scenario": null
+        }
+      ]
+    },
+    {
+      "id": "s-door6",
+      "title": "特別關卡：關門紀律",
+      "background": "課室・上午",
+      "description": "上堂時，有人走咗出去但冇閂門。老師望咗一下皺眉，但冇出聲。祝卓鋒走咗去閂門，但用力太大，門好大聲。全部人望住老師...",
+      "characters": [
+        { "name": "祝卓鋒", "emoji": "🚪", "initial_relationship": 50 },
+        { "name": "老師", "emoji": "👩‍🏫", "initial_relationship": 55 }
+      ],
+      "hints": [
+        "幫手關門係好意，但要注意方式...",
+        "太大聲會影響課堂秩序...",
+        "有技巧咁協助，可以避免尷尬"
+      ],
+      "options": [
+        {
+          "id": "s-door6-a",
+          "text": "笑祝卓鋒：「你整到好大聲呀！」",
+          "effects": [
+            { "character": "祝卓鋒", "change": -15, "moralChange": -10, "comment": "祝卓鋒好尷尬，其他人笑。老師皺眉望你..." },
+            { "character": "老師", "change": -10, "moralChange": -5, "comment": "老師認為你唔尊重同學。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door6-b",
+          "text": "輕聲話祝卓鋒：「下次温柔啲啦」",
+          "effects": [
+            { "character": "祝卓鋒", "change": 15, "moralChange": 15, "comment": "祝卓鋒多謝你體諒，點點頭。老師見到你關心同學，微笑。" },
+            { "character": "老師", "change": 10, "moralChange": 5, "comment": "老師欣賞你嘅成熟處理方式。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-door6-c",
+          "text": "主動走埋去，輕手輕腳閂好門",
+          "effects": [
+            { "character": "祝卓鋒", "change": 10, "moralChange": 20, "comment": "你示範咗點樣安靜關門。祝卓鋒學到嘢，老師滿意。" },
+            { "character": "老師", "change": 15, "moralChange": 10, "comment": "老師向你點點頭，繼續上課。" }
+          ],
+          "next_scenario": null
+        }
+      ]
     }
   ],
   "endings": [
@@ -2941,6 +3109,7 @@
       // 直接使用內置數據，唔再 fetch
       gameData = getDefaultScenarios();
       totalScenarios = gameData.scenarios.length; // 動態計算總關卡數
+      gameStats.totalScenarios = totalScenarios; // 同步到 gameStats
       buildCharacterCache();
     }
     
@@ -3071,7 +3240,18 @@
           gameStats.skills[finalSkill] = Math.min(gameStats.skills[finalSkill] + 1, SKILLS[finalSkill].max);
           checkConceptUnlock(finalSkill);
         }
+        // 連續答對 +1
+        gameStats.streakCorrect++;
+      } else {
+        // 答錯重置連續
+        gameStats.streakCorrect = 0;
       }
+      // 已完成關卡數 +1
+      gameStats.scenariosCompleted++;
+      // 更新最高道德積分
+      if (moral > gameStats.moralBest) gameStats.moralBest = moral;
+      // 更新每週進度
+      updateWeeklyProgress(1, moral);
       saveGameStats();
     }
 
@@ -3373,6 +3553,8 @@
     window.restartGame = restartGame;
     window.speakTextDirect = speakTextDirect;
     window.showHintTier = showHintTier;
+    window.showCharacterDetail = showCharacterDetail;
+    window.getWeeklyProgressHTML = getWeeklyProgressHTML;
 
     // 顯示關係值
     function showRelationships() {
@@ -3392,7 +3574,7 @@
         else if (value < 60) barClass = 'medium';
         
         return `
-          <div class="char-card">
+          <div class="char-card" onclick="showCharacterDetail('${name}')" style="cursor:pointer;" title="點擊查看與 ${name} 的關係">
             <div class="char-emoji">${emoji}</div>
             <div class="char-name">${name}</div>
             <div class="char-bar-container">
@@ -3402,7 +3584,7 @@
           </div>
         `;
       }).join('') + `
-        <div class="char-card moral-card">
+        <div class="char-card moral-card" onclick="showCharacterDetail('道德值')" style="cursor:pointer;" title="點擊查看道德值詳情">
           <div class="char-emoji">⚖️</div>
           <div class="char-name">道德值</div>
           <div class="char-bar-container">
@@ -3411,6 +3593,25 @@
           <div class="char-value">${moral}%</div>
         </div>
       `;
+    }
+
+    // 顯示角色關係詳情
+    function showCharacterDetail(name) {
+      if (name === '道德值') {
+        const level = moral >= 60 ? '高' : moral >= 30 ? '中' : '低';
+        const desc = moral >= 60 ? '你嘅道德水平好高，做人都幾正直！' : moral >= 30 ? '道德水平中等，繼續努力提升！' : '道德水平需要改善...';
+        alert(`⚖️ 道德值\n\n當前：${moral}%\n等級：${level}\n\n${desc}`);
+        return;
+      }
+      const value = Math.max(0, Math.min(100, relationships[name] || 0));
+      const emoji = getCharacterEmoji(name);
+      let level = '陌生', desc;
+      if (value >= 80) { level = '好朋友'; desc = '你同佢係好朋友！繼續保持呢段友誼！'; }
+      else if (value >= 60) { level = '熟絡'; desc = '你哋關係唔錯，繼續努力！'; }
+      else if (value >= 40) { level = '普通'; desc = '你哋係普通同學關係，可以再主動啲！'; }
+      else if (value >= 20) { level = '疏遠'; desc = '你哋關係有啲疏遠...試下多啲關心佢！'; }
+      else { level = '惡劣'; desc = '你哋關係需要注意...主動道歉係修復嘅第一步！'; }
+      alert(`${emoji} ${name}\n\n關係值：${value}%\n等級：${level}\n\n${desc}`);
     }
 
     // 獲取角色emoji - O(1) from cache
@@ -3449,9 +3650,10 @@
       // 收集情景中的角色
       const chars = scenario.characters || [];
       const charHTML = chars.map(c => `
-        <div class="character-avatar" id="char-${c.name}">
+        <div class="character-avatar" id="char-${c.name}" onclick="showCharacterDetail('${c.name}')" style="cursor:pointer;" title="點擊查看與 ${c.name} 的關係">
           <span class="char-emoji">${c.emoji}</span>
           <div class="character-label">${c.name}</div>
+          <div class="char-rel-mini" id="rel-${c.name}" style="font-size:10px;color:var(--yellow);margin-top:4px;">${relationships[c.name] || c.initial_relationship || 50}%</div>
         </div>
       `).join('');
 
@@ -3596,6 +3798,27 @@
     // 設定 functions
     function toggleSettings() {
       document.getElementById('settings-panel').classList.toggle('open');
+      // Update weekly progress display in settings panel
+      const weeklyDisplay = document.getElementById('weekly-progress-display');
+      if (weeklyDisplay) {
+        weeklyDisplay.innerHTML = getWeeklyProgressHTML();
+      }
+    }
+
+    function getWeeklyProgressHTML() {
+      const progress = getWeeklyProgress();
+      return `
+        <div style="background:var(--bg-dark);padding:10px;border-radius:6px;">
+          <p style="color:var(--cream);font-size:12px;">本週完成：<strong style="color:var(--yellow);">${progress.completed}</strong> 關</p>
+          <div style="background:var(--bg-mid);height:14px;border-radius:3px;margin:6px 0;overflow:hidden;">
+            <div style="height:100%;width:${Math.min(progress.completed/10*100,100)}%;background:var(--green);"></div>
+          </div>
+          <p style="color:var(--cream);font-size:12px;">道德積分：<strong style="color:var(--yellow);">${progress.moralEarned}</strong></p>
+          <div style="background:var(--bg-mid);height:14px;border-radius:3px;margin:6px 0;overflow:hidden;">
+            <div style="height:100%;width:${Math.min(progress.totalMoral/100*100,100)}%;background:var(--orange);"></div>
+          </div>
+        </div>
+      `;
     }
     
     function updateFontSize(size) {
@@ -3843,12 +4066,28 @@
         showRelationships();
         // 移除彈窗
         document.querySelector('.result-overlay')?.remove();
+        // 自動朗讀提示（張鈞保語音強化模式）
+        if (currentScenario?.hints && settings.autoVoiceRead) {
+          const tier2Hint = currentScenario.hints[1] || currentScenario.hints[0];
+          if (tier2Hint) {
+            setTimeout(() => speakTextDirect(tier2Hint), 300);
+          }
+        }
         // 重新顯示當前情景
         showScenario(currentScenario);
       } else {
         // 如果冇 previousRelationships，直接 close modal 同 reload scenario
         document.querySelector('.result-overlay')?.remove();
-        if (currentScenario) showScenario(currentScenario);
+        if (currentScenario) {
+          // 自動朗讀提示（張鈞保語音強化模式）
+          if (currentScenario?.hints && settings.autoVoiceRead) {
+            const tier2Hint = currentScenario.hints[1] || currentScenario.hints[0];
+            if (tier2Hint) {
+              setTimeout(() => speakTextDirect(tier2Hint), 300);
+            }
+          }
+          showScenario(currentScenario);
+        }
       }
     }
 
@@ -3880,6 +4119,24 @@
 
       const ending = endingMap[`${relLevel}_${moralLevel}`] || endingMap['mid_mid'];
       showEndingWithMoral(ending, avgRelationship);
+    }
+
+    // 顯示每週進度（用於結束畫面或設定面板）
+    function showWeeklyProgressHTML() {
+      const progress = getWeeklyProgress();
+      return `
+        <div style="background:var(--bg-dark);border:2px solid var(--yellow);padding:15px;border-radius:8px;margin:15px 0;">
+          <p style="color:var(--yellow);font-size:12px;margin-bottom:10px;">📅 本週進度</p>
+          <p style="color:var(--cream);font-size:14px;">完成關卡：<strong style="color:var(--yellow);">${progress.completed}</strong></p>
+          <div style="background:var(--bg-mid);height:20px;border-radius:4px;margin:8px 0;overflow:hidden;">
+            <div style="height:100%;width:${Math.min(progress.completed/10*100,100)}%;background:var(--green);transition:width 0.3s;"></div>
+          </div>
+          <p style="color:var(--cream);font-size:14px;">道德積分：<strong style="color:var(--yellow);">${progress.moralEarned}</strong></p>
+          <div style="background:var(--bg-mid);height:20px;border-radius:4px;margin:8px 0;overflow:hidden;">
+            <div style="height:100%;width:${Math.min(progress.totalMoral/100*100,100)}%;background:var(--orange);transition:width 0.3s;"></div>
+          </div>
+        </div>
+      `;
     }
 
     // 顯示道德結局
@@ -3939,6 +4196,7 @@
             ${showSkillProgress()}
           </div>
           ${showConceptCards()}
+          ${showWeeklyProgressHTML()}
           <div class="ending-title">🏆 遊戲完成！</div>
           <div class="ending-desc">你已完成所有關卡！</div>
           <div class="learning-points">${learningPoints.map(p => `<p>${p}</p>`).join('')}</div>
