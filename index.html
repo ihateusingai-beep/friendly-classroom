@@ -1255,7 +1255,7 @@
       <span class="settings-label">📗 兩選項簡化模式</span>
       <div class="settings-row">
         <label class="toggle-switch">
-          <input type="checkbox" id="simpleModeToggle" onchange="toggleSimpleMode(this.checked)">
+          <input type="checkbox" id="simpleModeToggle" onclick="toggleSimpleMode(this.checked)">
           <span class="toggle-slider"></span>
         </label>
         <span id="simpleModeStatus" style="color:var(--cream);font-size:14px;">關</span>
@@ -2455,6 +2455,32 @@
             }
           ],
           "next_scenario": null
+        },
+        {
+          "id": "s-h5-b",
+          "text": "自己一個發脾氣，闹點解冇叫我",
+          "effects": [
+            {
+              "character": "爸爸",
+              "change": -15,
+              "moralChange": -20,
+              "comment": "爸爸話：「你自己冇出聲，點知我唔叫你？」..."
+            }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-h5-c",
+          "text": "主動走去問爸爸：「下次family trip可唔可以叫埋我？」",
+          "effects": [
+            {
+              "character": "爸爸",
+              "change": 20,
+              "moralChange": 20,
+              "comment": "爸爸笑話：「好呀，下次一定叫埋你！我以為你今次冇興趣...」"
+            }
+          ],
+          "next_scenario": null
         }
       ]
     },
@@ -3101,9 +3127,456 @@
           "next_scenario": null
         }
       ]
+    },
+    {
+      "id": "s-new1",
+      "title": "關卡：新嚮室借嘢",
+      "background": "洗手間・小息時間",
+      "description": "小明發現自己廁紙唔夠，向你借。你今日得少量，但足夠自己用...",
+      "hints": ["分享係美德，但都要衡量自己係咪真係有餘裕", "可以拒絕，但解釋清楚原因會舒服啲", "量力而為，分享係快樂既事"],
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new1-a",
+          "text": "全部借晒俾佢",
+          "effects": [
+            { "character": "小明", "change": 20, "moralChange": 10, "comment": "小明多謝你！但你自己就冇得用...第二節課忍得辛苦。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new1-b",
+          "text": "拒絕話：「我都要用啊」",
+          "effects": [
+            { "character": "小明", "change": -10, "moralChange": 0, "comment": "小明有啲失望但表示理解。你覺得有点過意唔去..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new1-c",
+          "text": "分一半俾佢",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": 15, "comment": "小明話：「多謝你分俾我！」你兩個都夠用，好人好己。" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "toilet"
+    },
+    {
+      "id": "s-new2",
+      "title": "關卡：排隊定插隊？",
+      "background": "禮堂・集合時間",
+      "description": "到你排隊拎飯既時候，有人突然插入你前面。你認出佢係高年級既大舊..."
+,
+      "hints": ["面對權威唔一定要硬碰，但都要懂得保護自己", "大膽表達係一種勇氣，但都要注意方式", "有時退一步海闊天空，但底線要守住"],
+      "characters": [
+        { "name": "大舊", "emoji": "🧔", "initial_relationship": 30 }
+      ],
+      "options": [
+        {
+          "id": "s-new2-a",
+          "text": "大聲喝止：「你排後啲去！」",
+          "effects": [
+            { "character": "大舊", "change": -15, "moralChange": 10, "comment": "大舊瞪你一眼，但知道你岩道理，靜靜走回後面排..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new2-b",
+          "text": "默默忍受唔出聲",
+          "effects": [
+            { "character": "大舊", "change": 0, "moralChange": -5, "comment": "你覺得委屈，但唔敢出聲。心裡不舒服，但又觉得自己改變不了..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new2-c",
+          "text": "請老師幫手維持秩序",
+          "effects": [
+            { "character": "大舊", "change": -10, "moralChange": 5, "comment": "老師過來話：「同學，排隊係基本紀律。」大舊望了你一眼..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "hall"
+    },
+    {
+      "id": "s-new3",
+      "title": "關卡：圖書館大喊大叫",
+      "background": "圖書館・課外活動",
+      "description": "你係圖書館搵書，見到幾個同學大聲傾偈，完全無視「保持安靜」既提示牌...",
+      "hints": ["圖書館係大家既地方，尊重規則先可以共享", "可以直接提醒，有時別人係真係唔記得", "如果有風險，搵大人幫手係合理既"],
+      "characters": [
+        { "name": "小彬", "emoji": "👨‍🎓", "initial_relationship": 50 },
+        { "name": "小健", "emoji": "👦", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new3-a",
+          "text": "走過去話：「唔好意思，圖書館要聲細啲」",
+          "effects": [
+            { "character": "小彬", "change": 10, "moralChange": 15, "comment": "小彬話：「哦！唔好意思，我哋唔知。」即刻細聲咗。你覺得有種成功感！" },
+            { "character": "小健", "change": 10, "moralChange": 10, "comment": "小健笑住話：「好呢個同學！」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new3-b",
+          "text": "在心到彈弓手指，但唔出聲",
+          "effects": [
+            { "character": "小彬", "change": 0, "moralChange": 0, "comment": "你繼續受干擾，心裡不開心但又慶幸自己冇出聲..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new3-c",
+          "text": "走去告訴圖書館老師",
+          "effects": [
+            { "character": "小彬", "change": -10, "moralChange": 5, "comment": "老師過來提醒，佢哋立刻安靜。但你覺得有啲兩個唔高興..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "library"
+    },
+    {
+      "id": "s-new4",
+      "title": "關卡：雨天冇晒傘",
+      "background": "校門口・放學時間",
+      "description": "放學時突然落大雨，你帶咗遮，但同學小美冇帶，佢望住天有啲發愁...",
+      "hints": ["關心別人之前，都要先確保自己唔會因為幫人而被淋病", "分享資源係美德，但每個人都要為自己既選擇負責", "有技巧既幫助，避免俾人感到難堪"],
+      "characters": [
+        { "name": "小美", "emoji": "👩‍🎓", "initial_relationship": 55 }
+      ],
+      "options": [
+        {
+          "id": "s-new4-a",
+          "text": "話：「我送你到車牌度，一齊遮啦」",
+          "effects": [
+            { "character": "小美", "change": 20, "moralChange": 15, "comment": "小美好開心：「多謝你！」你兩個夾住一齊撐，順利到達。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new4-b",
+          "text": "把遮借俾佢，自己跑走去車牌",
+          "effects": [
+            { "character": "小美", "change": 15, "moralChange": 5, "comment": "小美話：「但你點算？」你濕晒跑回車牌，小美拎住遮好感激..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new4-c",
+          "text": "話：「不如等等，可能一陣就停」",
+          "effects": [
+            { "character": "小美", "change": 5, "moralChange": 0, "comment": "你兩個喺有蓋走廊等，雨真係慢慢細咗。小美話：「算啦，等停先！」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "rainy"
+    },
+    {
+      "id": "s-new5",
+      "title": "關卡：運動場單雙槓",
+      "background": "運動場・體育課",
+      "description": "體育課試跳遠，你見到另一組既小杰係度呃老師，話自己跳咗幾遠，但明明就差啲...",
+      "hints": ["誠實係基本，但誠實為別人帶來幾大影響要先諗清楚", "係咪一定要喺當場拆穿？可以事後私下傾", "有時俾人一個改正既機會，比直接拆穿更啱"],
+      "characters": [
+        { "name": "小杰", "emoji": "🏃", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new5-a",
+          "text": "當場話：「喂，小杰你未跳到咁遠喎」",
+          "effects": [
+            { "character": "小杰", "change": -20, "moralChange": 10, "comment": "小杰呆咗，老師走過嚟再量一次。「哦，真係差啲，再跳一次啦。」小杰塊面紅晒..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new5-b",
+          "text": "走過去私下話：「老師叫你自己再跳過」",
+          "effects": [
+            { "character": "小杰", "change": -5, "moralChange": 5, "comment": "小杰知你提醒咗，怒視你一眼但又乖乖再跳。「算你知啦！」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new5-c",
+          "text": "扮晒事不關己，继续練習自己既",
+          "effects": [
+            { "character": "小杰", "change": 0, "moralChange": -5, "comment": "你心諗：「關我鬼事...」但又覺得小杰咁樣做係唔啱..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "sports"
+    },
+    {
+      "id": "s-new6",
+      "title": "關卡：飯堂唔記得带錢",
+      "background": "飯堂・午膳時間",
+      "description": "你排緊隊，前面既小福突然話：「衰咗，我唔記得带銀包！」佢望住你...",
+      "hints": ["借錢涉及還錢問題，要確保對方係可以還到", "有時直接話「幫唔到」比呃呃哋更啱", "如果決定幫，要清楚說明還錢時間"],
+      "characters": [
+        { "name": "小福", "emoji": "🍱", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new6-a",
+          "text": "話：「你要幾多？我借你啦」",
+          "effects": [
+            { "character": "小福", "change": 20, "moralChange": 10, "comment": "小福話：「多謝！下次还你！」你借咗30蚊俾佢..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new6-b",
+          "text": "話：「唔好意思，我今餐都唔夠」",
+          "effects": [
+            { "character": "小福", "change": -5, "moralChange": 0, "comment": "小福有啲失望，但知道真係冇辦法。佢問後面同學..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new6-c",
+          "text": "話：「我請你啦，唔使還」",
+          "effects": [
+            { "character": "小福", "change": 20, "moralChange": 15, "comment": "小福好感激：「真係唔使還？太謝謝你！」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "canteen"
+    },
+    {
+      "id": "s-new7",
+      "title": "關卡：走廊掉垃圾",
+      "background": "走廊・課間",
+      "description": "小看經過你身邊整跌咗包垃圾，嘢撒晒喺地下，但佢頭也不回就走...",
+      "hints": ["有時沉默就係帮凶，勇敢話俾事人知道", "執垃圾係每個人既責任，唔關邊個整跌既事", "但如果只係為咗自己舒服，而唔係為咗環境，係唔夠"],
+      "characters": [
+        { "name": "小看", "emoji": "🧹", "initial_relationship": 45 }
+      ],
+      "options": [
+        {
+          "id": "s-new7-a",
+          "text": "立即走埋去話：「你整跌咗嘢！」",
+          "effects": [
+            { "character": "小看", "change": -10, "moralChange": 5, "comment": "小看改咗個表情：「吓？對唔住！」然後幫手執。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new7-b",
+          "text": "自己默默執乾淨",
+          "effects": [
+            { "character": "小看", "change": 0, "moralChange": 5, "comment": "你蹲低執，心裡有啲不快：「點解要我執...」但走廊乾淨晒，你話俾自己知做啱咗。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new7-c",
+          "text": "影低相片，老師話俾佢知",
+          "effects": [
+            { "character": "小看", "change": -15, "moralChange": 0, "comment": "老師知道後話小看，小看知係你：「你老臨仔！」你覺得有啲後悔..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "corridor"
+    },
+    {
+      "id": "s-new8",
+      "title": "關卡：唔記得带功课",
+      "background": "課室・朝早",
+      "description": "朝早老師話：「邊個未做完功课？」你心知自己就係其中一個，但你真係唔記得带張紙...",
+      "hints": ["承認錯誤係需要勇氣，但老師通常會明白", "唔记得带唔等於未做，可以解釋清楚", "但如果真係未做，就係另一個問題了"],
+      "characters": [
+        { "name": "老師", "emoji": "👩‍🏫", "initial_relationship": 55 }
+      ],
+      "options": [
+        {
+          "id": "s-new8-a",
+          "text": "立即舉手話：「我唔記得带張紙，但係我做咗」",
+          "effects": [
+            { "character": "老師", "change": 15, "moralChange": 10, "comment": "老師話：「好，做咗就得，下次記得带。下課來我呢度補交。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new8-b",
+          "text": "扮同學抄",
+          "effects": [
+            { "character": "老師", "change": -20, "moralChange": -15, "comment": "老師发現：「你兩個係同一個錯？抖你鶴係呃人！」你兩個被罚留堂..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new8-c",
+          "text": "縮埋一邊，希望老師唔注意到自己",
+          "effects": [
+            { "character": "老師", "change": -5, "moralChange": -5, "comment": "老師真係注意到你：「你呢位同學，唔記得带同未做都係兩件事喔。」你面紅了..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s-new9",
+      "title": "關卡：勇於承認",
+      "background": "洗手間・活動時間",
+      "description": "你整爛咗洗手間門口個鏡，心諗：「冇人仔注意到呢...」但你心知道自己衰咗...",
+      "hints": ["承認錯誤需要好大勇氣，但係成長既必經階段", "老師 通常會欣賞勇於承認既學生", "長遠黎睇，大多數人都會因為你既勇氣而尊敬你"],
+      "characters": [
+        { "name": "老師", "emoji": "👩‍🏫", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new9-a",
+          "text": "主動走去找老師話：「對唔住，係我整爛個鏡」",
+          "effects": [
+            { "character": "老師", "change": 20, "moralChange": 25, "comment": "老師呆咗，然后話：「難得你有勇氣承認，你係好孩子。呢個我会記錄，但唔會罰你。」你心口大石放低！" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new9-b",
+          "text": "走為上著，扮晒冇事",
+          "effects": [
+            { "character": "老師", "change": -10, "moralChange": -10, "comment": "你成日好驚，擔心老師會查監視器。同學叫你，你都心不在焉..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new9-c",
+          "text": "寫一張匿名紙條解釋事件",
+          "effects": [
+            { "character": "老師", "change": 10, "moralChange": 15, "comment": "老師收到匿名紙條，話：「有人整爛咗但願意承認，幾好。但我希望大家直接嚟搵我。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "toilet"
+    },
+    {
+      "id": "s-new10",
+      "title": "關卡：關懷新同學",
+      "background": "禮堂・新生簡介會",
+      "description": "今日有新同學小玲轉過來，佢坐係一角冇人理。你听到其他同學話：「呢個係新來ga咋嘛...」",
+      "hints": ["新環境開始冇朋友係好孤獨既事，一句說話可以改變一切", "踏出第一步好難，但好值得", "關心别人唔需要任何理由，只因為佢需要"],
+      "characters": [
+        { "name": "小玲", "emoji": "👧", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new10-a",
+          "text": "走過去自我介紹：「你係新同學？我叫小明，請問你叫咩名？」",
+          "effects": [
+            { "character": "小玲", "change": 25, "moralChange": 15, "comment": "小玲呆咗，然后笑：「我叫小玲！多謝你嚟......」你帶佢認識其他同學！" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new10-b",
+          "text": "對其他人話：「你哋唔好咁樣衰幾，新同學會難堪ga」",
+          "effects": [
+            { "character": "小玲", "change": 10, "moralChange": 10, "comment": "其他人縮一縮，但小玲望到你為佢出聲，心裡有啲感動..." }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new10-c",
+          "text": "自己玩自己，冇特别理踩",
+          "effects": [
+            { "character": "小玲", "change": -10, "moralChange": 0, "comment": "小玲成日都係一個坐，見到你地傾偈好羡慕，但又唔敢行過去..." }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "hall"
+    },
+    {
+      "id": "s-new11",
+      "title": "關卡：誠實面對",
+      "background": "圖書館・溫習時",
+      "description": "你借咗圖書館本書，到期咗都未睇完，本嚟可以攤30日，但圖書館話比你攤2本，你已經攤晒...",
+      "hints": ["圖書館既規則係為公平，如果人人都逾期就冇人借到", "主動解釋通常會得到更好的結果", "每個人都有困難既時候，但欺騙會令問題變大"],
+      "characters": [
+        { "name": "圖書館老師", "emoji": "👩‍🏫", "initial_relationship": 55 }
+      ],
+      "options": [
+        {
+          "id": "s-new11-a",
+          "text": "主動解釋：「我可以點樣還？我真係好想做功課但未做完」",
+          "effects": [
+            { "character": "圖書館老師", "change": 20, "moralChange": 20, "comment": "老師話：「我明白你有心，呢個我讓你先溫習，下周還就得。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new11-b",
+          "text": "走去圖書館話：「我想要更多時間，可以嘛？」",
+          "effects": [
+            { "character": "圖書館老師", "change": 15, "moralChange": 10, "comment": "老師話：「好，基於你主動嚟傾，我可以再比你一個禮拜。但下次要早啲还啊。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new11-c",
+          "text": "走去圖書館話：「我想要更多時間，可以嘛？」",
+          "effects": [
+            { "character": "圖書館老師", "change": 15, "moralChange": 10, "comment": "老師話：「好，基於你主動嚟傾，我可以再比你一個禮拜。但下次要早啲还啊。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "library"
+    },
+    {
+      "id": "s-new12",
+      "title": "關卡：面对冲突",
+      "background": "運動場・課外活動",
+      "description": "足球比賽，小璋話你打佢，但你只係輕輕掽咗佢一下。佢向老師告你好大打人...",
+      "hints": ["有時誤會係因為雙方理解唔同，耐心解釋可以化解", "但如果對方故意呃人，唔代表你要啞認", "有第三方を幫手仲裁係合理既"],
+      "characters": [
+        { "name": "小璋", "emoji": "⚽", "initial_relationship": 35 },
+        { "name": "老師", "emoji": "👨‍🏫", "initial_relationship": 55 }
+      ],
+      "options": [
+        {
+          "id": "s-new12-a",
+          "text": "冷靜話俾老師知：「我係輕輕掽到，但佢話我大打人」",
+          "effects": [
+            { "character": "小璋", "change": -10, "moralChange": 5, "comment": "老師話：「我明白，足球係要有身體接觸既運動。但小璋你話大打人就太誇張喇。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new12-b",
+          "text": "大鬧：「你呃人！我只係掽到你！」",
+          "effects": [
+            { "character": "小璋", "change": -20, "moralChange": -10, "comment": "老師話：「你兩個冷靜啲！吵架唔可以解決問題。」你兩個都被罚坐下。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new12-c",
+          "text": "走向小璋：「我知你一定好嬲，但我真係唔係特登。你有冇邊度整親？」",
+          "effects": [
+            { "character": "小璋", "change": 5, "moralChange": 15, "comment": "小璋呆咗，没諗到你會行過去關心。佢話：「...我手臂有啲痛，但唔關你事。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "sports"
     }
   ],
-  "endings": [
     {
       "id": "e1",
       "min_relationship": 80,
@@ -3887,9 +4360,9 @@
       document.getElementById('simpleModeStatus').innerText = enabled ? '開' : '關';
       saveSettings();
       // Re-render current scenario so options update immediately
+      // currentScenario is already the scenario object (set in showScenario), not an ID
       if (currentScenario) {
-        const scenario = gameData.scenarios.find(s => s.id === currentScenario);
-        if (scenario) showScenario(scenario);
+        showScenario(currentScenario);
       }
     }
 
@@ -4537,5 +5010,5 @@
     // 啟動
     window.onload = init;
   </script>
-</body>
+<div id="watermark" style="position:fixed;bottom:16px;right:16px;display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,0.6);border-radius:8px;z-index:9999;pointer-events:none"><img src="https://i.imgur.com/OQwyeIV.png" alt="KC" style="height:24px;width:auto;"><span style="color:#fff;font-size:12px;font-family:sans-serif;">© Ken Cheng 製作</span></div></body>
 </html>
