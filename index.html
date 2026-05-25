@@ -3575,6 +3575,377 @@
         }
       ],
       "location": "sports"
+    },
+    {
+      "id": "s-new13",
+      "title": "關卡：誠實既勇氣",
+      "background": "課室・小息",
+      "description": "你整爛咗窗簾，但冇人睇到。老師問：「係邊個整爛嘅？」...",
+      "hints": ["冇人睇到唔代表可以做假", "承認錯誤需要勇氣，但係正確既事", "承認之後，老師會欣賞你既誠實"],
+      "characters": [
+        { "name": "老師", "emoji": "👨‍🏫", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new13-a",
+          "text": "舉手：「老師，對唔住，係我整爛嘅。」",
+          "effects": [
+            { "character": "老師", "change": 15, "moralChange": 10, "comment": "老師微笑話：「你敢認就好，你係個有勇氣既人。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new13-b",
+          "text": "話係風吹爛嘅，扮作唔關事",
+          "effects": [
+            { "character": "老師", "change": -15, "moralChange": -10, "comment": "老師話：「風係吹唔爛布簾既...」你心裏有啲唔舒服。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new13-c",
+          "text": "出信話：「我見到有人整爛，但我唔知係邊個。」",
+          "effects": [
+            { "character": "老師", "change": -5, "moralChange": 0, "comment": "老師話：「你係見到，但選擇唔幫手搵答案。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s-new14",
+      "title": "關卡：分享既快樂",
+      "background": "禮堂・聯歡會",
+      "description": "你帶咗好香嘅曲奇回校，好想自己食晒。同學望住你...",
+      "hints": ["分享會令人開心，自己食晒都會有人觉得你自私", "分享係一種善良既表現", "你可以請同學食一件，佢會好開心"],
+      "characters": [
+        { "name": "小悅", "emoji": "👧", "initial_relationship": 40 }
+      ],
+      "options": [
+        {
+          "id": "s-new14-a",
+          "text": "分一半俾同學：「你要唔要？」",
+          "effects": [
+            { "character": "小悅", "change": 20, "moralChange": 10, "comment": "小悅笑住接過：「多謝你！你真係好好！」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new14-b",
+          "text": "自己食晒，扮作睇唔到人",
+          "effects": [
+            { "character": "小悅", "change": -15, "moralChange": -5, "comment": "小悅話：「下次我帶野都唔分俾你...」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new14-c",
+          "text": "話：「我帶少咗，下堂再分俾你。」",
+          "effects": [
+            { "character": "小悅", "change": 5, "moralChange": 5, "comment": "小悅話：「好啦，記得喔！」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "hall"
+    },
+    {
+      "id": "s-new15",
+      "title": "關卡：團隊合作",
+      "background": "教室・分組活動",
+      "description": "分組做 project，你發覺組員小明成日發夢，唔做嘢...",
+      "hints": ["可以提醒佢，幫助佢專心", "如果你幫佢做曬，佢學唔到野", "團隊係要一齊努力，唔係一个人做曬"],
+      "characters": [
+        { "name": "小明", "emoji": "👦", "initial_relationship": 35 }
+      ],
+      "options": [
+        {
+          "id": "s-new15-a",
+          "text": "請佢一齊做：「我地一組，你負責揀圖片好唔好？」",
+          "effects": [
+            { "character": "小明", "change": 15, "moralChange": 10, "comment": "小明笑：「好！我最鍾意揀圖！」佢開始認真做。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new15-b",
+          "text": "自己幫佢做晒，反正快啲",
+          "effects": [
+            { "character": "小明", "change": -5, "moralChange": -5, "comment": "小明繼續發夢，你做完晒但好攰。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new15-c",
+          "text": "鬧佢：「你做嘢啦！」",
+          "effects": [
+            { "character": "小明", "change": -20, "moralChange": -10, "comment": "小明嬲咗：「你憑咩鬧我！」組入面鬧大件事。" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s-new16",
+      "title": "關卡：尊重別人",
+      "background": "電腦室・課堂活動",
+      "description": "同學小琳分享佢既畫，你覺得好樣衰，想笑...",
+      "hints": ["每個人既作品都值得尊重", "如果別人笑你，你會點諗？", "你可以批評，但要用善良既方式"],
+      "characters": [
+        { "name": "小琳", "emoji": "👧", "initial_relationship": 40 }
+      ],
+      "options": [
+        {
+          "id": "s-new16-a",
+          "text": "笑話：「哈哈哈哈！你畫啲乜嘢嚟嘅！」",
+          "effects": [
+            { "character": "小琳", "change": -25, "moralChange": -15, "comment": "小琳喊咗：「你做咩笑我...」其他同學望向你。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new16-b",
+          "text": "忍住笑，禮貌話：「我覺得可以再畫好啲。」",
+          "effects": [
+            { "character": "小琳", "change": 5, "moralChange": 5, "comment": "小琳話：「我再畫過啦...」佢冇太難過。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new16-c",
+          "text": "真心地讚：「呢度好有創意，我鍾意你用嘅顏色！」",
+          "effects": [
+            { "character": "小琳", "change": 20, "moralChange": 15, "comment": "小琳笑：「多謝你！我再畫多啲！」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "computer"
+    },
+    {
+      "id": "s-new17",
+      "title": "關卡：聆聽他人",
+      "background": "圖書館・自習時間",
+      "description": "同學小華話佢屋企有事，聲音好細咁講，你專心睇書...",
+      "hints": ["聆聽係一種尊重", "有時人需要有人聽佢講", "你做緊既嘢可以等，但朋友說話唔可以"],
+      "characters": [
+        { "name": "小華", "emoji": "👦", "initial_relationship": 35 }
+      ],
+      "options": [
+        {
+          "id": "s-new17-a",
+          "text": "停低睇書，專心聽佢講：「我聽緊，你繼續。」",
+          "effects": [
+            { "character": "小華", "change": 25, "moralChange": 15, "comment": "小華感動：「多謝你...我爸爸住院了。」你陪伴佢直到小息完結。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new17-b",
+          "text": "一邊睇書一邊聽，點頭回應",
+          "effects": [
+            { "character": "小華", "change": 5, "moralChange": 0, "comment": "小華：「嗯...算啦，冇嘢...」佢走開咗。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new17-c",
+          "text": "話：「我忙緊聽，你陣間再講。」",
+          "effects": [
+            { "character": "小華", "change": -20, "moralChange": -10, "comment": "小華冇出聲，但眼中有啲失望。" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "library"
+    },
+    {
+      "id": "s-new18",
+      "title": "關卡：承認錯誤",
+      "background": "操場・體育課",
+      "description": "你排籃球時唔小心整跌咗另一位同學，佢整損咗膝頭...",
+      "hints": ["整跌人要道歉，係基本禮貌", "帶佢去校務處處理傷口係負責任既表現", "承認錯誤並幫助人，係正確既事"],
+      "characters": [
+        { "name": "大雄", "emoji": "🏃", "initial_relationship": 40 }
+      ],
+      "options": [
+        {
+          "id": "s-new18-a",
+          "text": "立刻道歉並扶起佢：「對唔住！我帶你去處理傷口！」",
+          "effects": [
+            { "character": "大雄", "change": 20, "moralChange": 15, "comment": "大雄：「算啦，唔洗咁緊張...但多謝你。」佢接受你去校務處。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new18-b",
+          "text": "話：「你自己唔小心，關我咩事！」",
+          "effects": [
+            { "character": "大雄", "change": -30, "moralChange": -20, "comment": "大雄嬲咗：「你整跌我竟然仲咁寸！」老師走埋嚟。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new18-c",
+          "text": "跑走咗，扮作冇事發生",
+          "effects": [
+            { "character": "大雄", "change": -25, "moralChange": -15, "comment": "其他同學話：「你整跌人就跑！」你名聲變差。" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "sports"
+    },
+    {
+      "id": "s-new19",
+      "title": "關卡：拒絕欺凌",
+      "background": "洗手間・小息時間",
+      "description": "你見到幾個同學埋堆笑一位同學，仲話低價錢要整佢...",
+      "hints": ["欺凌係錯既，唔可以袖手旁觀", "你可以選擇保護被欺負既人", "告訴老師係正確既途徑"],
+      "characters": [
+        { "name": "小志", "emoji": "😢", "initial_relationship": 30 }
+      ],
+      "options": [
+        {
+          "id": "s-new19-a",
+          "text": "走出去話：「你地做咩蝦人！我要去告訴老師！」",
+          "effects": [
+            { "character": "小志", "change": 25, "moralChange": 20, "comment": "小志眼中有啲希望，其他人散去。老師讚你勇敢。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new19-b",
+          "text": "跟住笑：「哈哈哈！係囉，佢幾醜樣！」",
+          "effects": [
+            { "character": "小志", "change": -30, "moralChange": -20, "comment": "小志望向你，眼淚汪汪。你心入面有啲難受。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new19-c",
+          "text": "行開咗，扮作睇唔到",
+          "effects": [
+            { "character": "小志", "change": -10, "moralChange": -5, "comment": "你心入面有個聲音話：「其實我可以做多啲...」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "toilet"
+    },
+    {
+      "id": "s-new20",
+      "title": "關卡：誠實回應",
+      "background": "課室・課堂討論",
+      "description": "老師問你同學小張既答案你係咪幫咗佢，你答係...",
+      "hints": ["幫助朋友係好事，但唔可以幫佢做曬", "就算老師問，都要如實回答", "幫助同學係光榮既事"],
+      "characters": [
+        { "name": "小張", "emoji": "👦", "initial_relationship": 45 },
+        { "name": "老師", "emoji": "👨‍🏫", "initial_relationship": 50 }
+      ],
+      "options": [
+        {
+          "id": "s-new20-a",
+          "text": "點頭：「係，我幫咗佢，因為佢唔識。」",
+          "effects": [
+            { "character": "小張", "change": 15, "moralChange": 10, "comment": "老師話：「你幫助同學係好事，但下次要鼓勵他自己做。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new20-b",
+          "text": "話：「冇！我係自己答！」",
+          "effects": [
+            { "character": "小張", "change": -5, "moralChange": -15, "comment": "老師笑：「但你答法同小張一模一样喔...」你面紅咗。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new20-c",
+          "text": "話：「我地一齊諗，我解釋俾佢聽。」",
+          "effects": [
+            { "character": "小張", "change": 20, "moralChange": 15, "comment": "老師讚賞：「呢個係最好既學習方式！」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "classroom"
+    },
+    {
+      "id": "s-new21",
+      "title": "關卡：耐心等待",
+      "background": "食堂・午飯時間",
+      "description": "你排隊買飯，前面有人打尖...",
+      "hints": ["打尖係錯既，应该要排隊", "你可以禮貌地提醒佢", "如果對方係故意既，可以告訴老師"],
+      "characters": [
+        { "name": "打尖既人", "emoji": "😤", "initial_relationship": 30 }
+      ],
+      "options": [
+        {
+          "id": "s-new21-a",
+          "text": "禮貌話：「不好意思，請問你係呢度排隊嗎？」",
+          "effects": [
+            { "character": "打尖既人", "change": 5, "moralChange": 10, "comment": "打尖既人呆咗，轉頭望一望，然後行回後面排隊。「哦...我唔記得咗。」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new21-b",
+          "text": "大鬧：「你打尖呀！好無恥呀！」",
+          "effects": [
+            { "character": "打尖既人", "change": -20, "moralChange": -5, "comment": "打尖既人嬲咗，你兩個吵起上來，老師行埋嚟。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new21-c",
+          "text": "默默忍受，等佢買完",
+          "effects": [
+            { "character": "打尖既人", "change": -5, "moralChange": -5, "comment": "你心有不甘，但避免咗衝突。你後面既人話：「多謝你等。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "cafeteria"
+    },
+    {
+      "id": "s-new22",
+      "title": "關卡：責任感",
+      "background": "課室・課後",
+      "description": "今日係你值日，但你好想走咗去同朋友玩...",
+      "hints": ["責任係要完成既，就算唔想做", "如果你走咗，邊個做值日？", "完成責任之後玩，會更加開心"],
+      "characters": [
+        { "name": "小琪", "emoji": "👧", "initial_relationship": 40 }
+      ],
+      "options": [
+        {
+          "id": "s-new22-a",
+          "text": "留低做值日，做完先去玩",
+          "effects": [
+            { "character": "小琪", "change": 15, "moralChange": 15, "comment": "小琪話：「你做嘢咁叻！我陪你一齊整！」你做好值日先去玩。" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new22-b",
+          "text": "話：「你幫我做啦，我請你食嘢！」",
+          "effects": [
+            { "character": "小琪", "change": -10, "moralChange": -10, "comment": "小琪皯眉：「但係老師話係你值日喔...」" }
+          ],
+          "next_scenario": null
+        },
+        {
+          "id": "s-new22-c",
+          "text": "跑走咗，扮作冇事",
+          "effects": [
+            { "character": "小琪", "change": -15, "moralChange": -15, "comment": "老師第二日話：「你走咗去，係唔負責任既表現。」" }
+          ],
+          "next_scenario": null
+        }
+      ],
+      "location": "classroom"
     }
   ],
     {
