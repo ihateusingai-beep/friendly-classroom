@@ -3882,6 +3882,34 @@
         const scenario = gameData.scenarios.find(s => s.id === currentScenario);
         if (scenario) showScenario(scenario);
       }
+
+    function toggleBgm(enabled) {
+      settings.bgmEnabled = enabled;
+      document.getElementById('bgmStatus').innerText = enabled ? '開' : '關';
+      saveSettings();
+      if (enabled) { playBgm('menu'); } else { stopBgm(); }
+    }
+    let currentBgm = null;
+    function playBgm(type) {
+      if (!settings.bgmEnabled) return;
+      stopBgm();
+      const bgmFiles = {
+        menu: 'assets/bgm/menu-start.mp3',
+        classroom: 'assets/bgm/classroom-cheerful.mp3',
+        break: 'assets/bgm/break-time-fun.mp3',
+        achievement: 'assets/bgm/achievement-proud.mp3',
+        calm: 'assets/bgm/calm-focus.mp3'
+      };
+      const file = bgmFiles[type];
+      if (!file) return;
+      currentBgm = new Audio(file);
+      currentBgm.loop = true;
+      currentBgm.volume = 0.4;
+      currentBgm.play().catch(() => {});
+    }
+    function stopBgm() {
+      if (currentBgm) { currentBgm.pause(); currentBgm.currentTime = 0; currentBgm = null; }
+    }
     }
 
     // 顯示提示 (Tier 1 by default)
@@ -4023,8 +4051,9 @@
 
       //.Play success/fail sound based on effect
       const totalChange = effects.reduce((sum, e) => sum + e.change, 0);
-      if (totalChange > 0) AudioSys.success();
-      else if (totalChange < 0) AudioSys.fail();
+      if (totalChange > 0) { AudioSys.success(); playBgm('achievement'); }
+      else if (totalChange < 0) { AudioSys.fail(); playBgm('calm'); }
+      setTimeout(() => stopBgm(), 4000); // Stop BGM after 4 seconds
 
       // 第一階段：後果敘述
       const comments = effects.map(e => {
