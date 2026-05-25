@@ -25,7 +25,7 @@
   tryShim('sessionStorage');
 })();</script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>友愛教室 - 像素大冒險</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+HK:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -43,6 +43,7 @@
       --blue: #64B5F6;
       --white: #fff8e0;
       --shadow: #1a0f07;
+      --purple: #9c27b0;
       --gold: #ffd700;
       --silver: #c0c0c0;
       --bronze: #cd7f32;
@@ -60,6 +61,9 @@
     }
 
     body {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
       font-family: 'Noto Sans HK', 'PingFang HK', sans-serif;
       background: var(--bg-dark);
       min-height: 100vh;
@@ -448,9 +452,9 @@
     }
 
     .hint-tier-btn.tier-3 {
-      background: rgba(239, 83, 80, 0.15);
-      border-color: var(--red);
-      color: var(--red);
+      background: rgba(156, 39, 176, 0.15);
+      border-color: var(--purple);
+      color: var(--purple);
     }
 
     .hint-tier-btn.active {
@@ -511,10 +515,10 @@
     }
 
     .hint-box.tier-3 {
-      background: rgba(239, 83, 80, 0.12);
+      background: rgba(156, 39, 176, 0.12);
       border-style: solid;
-      border-color: var(--red);
-      color: var(--red);
+      border-color: var(--purple);
+      color: var(--purple);
     }
 
     .hint-box.show {
@@ -1156,6 +1160,11 @@
       animation: none !important;
       opacity: 1;
       transform: none !important;
+    }
+
+    @keyframes pulse-continue {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,217,63,0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(255,217,63,0.3); }
     }
   </style>
 </head>
@@ -3724,7 +3733,7 @@
               const letters = settings.simpleMode ? ['A', 'B'] : ['A', 'B', 'C'];
               return `
               <div class="option-wrapper">
-                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();" aria-label="選擇選項${letters[i]}">
+                <button class="option-btn" onpointerdown="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();" aria-label="選擇選項${letters[i]}">
                   <span class="option-letter">${letters[i]}</span>${opt.text}
                   ${warnIcon ? `<span class="moral-warn ${warnClass}">${warnIcon}</span>` : ''}
                 </button>
@@ -4086,7 +4095,7 @@
                 記住呀，每個人都應該被尊重同關心～
                 <br>如果見到有人唔開心，可以問下佢發生咩事！
               </div>
-              <button class="continue-btn blink" onclick="finishFeedback(this)" aria-label="繼續遊戲">繼續 ▶</button>
+              <button class="continue-btn" style="animation: pulse-continue 1.5s infinite; font-size:18px; padding:15px 30px;" onclick="finishFeedback(this)" aria-label="繼續遊戲">繼續 ▶</button>
             </div>
             
             <button class="retry-btn" onclick="retryChoice()" aria-label="重新選擇">🔄 我想再想想</button>
@@ -4103,6 +4112,7 @@
       const card = btn.closest('.result-card');
       card.querySelector('.stage-consequence').style.display = 'none';
       card.querySelector('.stage-guidance').style.display = 'block';
+      // The "繼續下一關" button is already shown, just update its visibility
     }
 
     // 完成Feedback，進入下一個情景
