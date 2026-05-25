@@ -278,6 +278,25 @@
     .warn-negative { color: var(--red); border: 2px solid var(--red); }
     .warn-neutral { color: #aaa; border: 2px solid #aaa; }
 
+    /* 兩選項簡化模式徽章 */
+    .simple-mode-badge {
+      text-align: center;
+      margin-top: 12px;
+      padding: 6px 14px;
+      background: var(--bg-light);
+      border: 3px solid var(--green);
+      border-radius: 8px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      animation: pulse-badge 2s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
     /* 結果彈窗 */
     .result-overlay {
       display: none;
@@ -3661,7 +3680,7 @@
         <div class="scenario-card">
           <!-- Progress Bar -->
           <div class="progress-container">
-            <div class="progress-label">關卡進度：${currentScenarioNum}/${totalScenarios}</div>
+            <div class="progress-label">關卡進度：${currentScenarioNum}/${totalScenarios} ${settings.simpleMode ? '📗' : ''}</div>
             <div class="progress-bar">
               <div class="progress-fill" style="width:${(currentScenarioNum/totalScenarios)*100}%"></div>
             </div>
@@ -3702,16 +3721,18 @@
               const moralChange = opt.effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
               const warnIcon = moralChange > 0 ? '⚠️+'+moralChange : moralChange < 0 ? '⚠️'+moralChange : '';
               const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
+              const letters = settings.simpleMode ? ['A', 'B'] : ['A', 'B', 'C'];
               return `
               <div class="option-wrapper">
-                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();" aria-label="選擇選項${['A', 'B', 'C'][i]}">
-                  <span class="option-letter">${['A', 'B', 'C'][i]}</span>${opt.text}
+                <button class="option-btn" onmouseover="if(settings.autoVoiceRead) speakTextDirect('${opt.text.replace(/'/g, "\\'")}')" onclick="chooseOption('${scenario.id}', '${opt.id}'); event.stopPropagation();" aria-label="選擇選項${letters[i]}">
+                  <span class="option-letter">${letters[i]}</span>${opt.text}
                   ${warnIcon ? `<span class="moral-warn ${warnClass}">${warnIcon}</span>` : ''}
                 </button>
                 <button class="option-speak-btn" onclick="speakTextDirect('${opt.text.replace(/'/g, "\\'")}'); event.stopPropagation();" title="讀出呢個選項" aria-label="朗讀選項文字">🔊</button>
               </div>
             `}).join('')}
           </div>
+          ${settings.simpleMode ? '<div class="simple-mode-badge">📗 兩選項簡化模式</div>' : ''}
 
           <button class="home-btn" onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
         </div>
@@ -3856,6 +3877,11 @@
       settings.simpleMode = enabled;
       document.getElementById('simpleModeStatus').innerText = enabled ? '開' : '關';
       saveSettings();
+      // Re-render current scenario so options update immediately
+      if (currentScenario) {
+        const scenario = gameData.scenarios.find(s => s.id === currentScenario);
+        if (scenario) showScenario(scenario);
+      }
     }
 
     // 顯示提示 (Tier 1 by default)
