@@ -1548,6 +1548,7 @@
     let previousRelationships = null;
     let previousMoral = 50;
     let currentOnContinue = null;
+    let lastTotalChange = 0; // Store last result for dynamic guidance
     
     // 初始化
     async function init() {
@@ -4946,6 +4947,9 @@
       const colorClass = isPositive ? 'title-positive' : 'title-negative';
       const epicTitle = epicPhrases[Math.floor(Math.random() * epicPhrases.length)];
 
+      // Store for showGuidanceTip to use
+      lastTotalChange = totalChange;
+      
       gameArea.innerHTML = `
         <div class="result-overlay show">
           <div class="result-card feedback-modal">
@@ -4957,10 +4961,7 @@
             
             <div class="feedback-stage stage-guidance" style="display:none;">
               <div class="feedback-title">💡 俾啲提示你</div>
-              <div class="guidance-tip">
-                記住呀，每個人都應該被尊重同關心～
-                <br>如果見到有人唔開心，可以問下佢發生咩事！
-              </div>
+              <div class="guidance-tip" id="dynamic-guidance"></div>
               <button class="continue-btn" style="animation: pulse-continue 1.5s infinite; font-size:18px; padding:15px 30px;" onclick="finishFeedback(this)" aria-label="繼續遊戲">繼續 ▶</button>
             </div>
             
@@ -4978,7 +4979,30 @@
       const card = btn.closest('.result-card');
       card.querySelector('.stage-consequence').style.display = 'none';
       card.querySelector('.stage-guidance').style.display = 'block';
-      // The "繼續下一關" button is already shown, just update its visibility
+      
+      // Dynamically generate guidance based on result and current scenario
+      const guidanceEl = card.querySelector('#dynamic-guidance');
+      let guidanceText = '';
+      
+      if (lastTotalChange >= 0) {
+        // Positive result - encouraging affirmation
+        const encouragements = [
+          '你做得好好！繼續保持呢份善良同關心～',
+          '好人好事！你的選擇令世界變得更美好 🌟',
+          '太棒了！同理心係最重要既品質之一',
+          '你具備真正既友誼力量！繼續發光 ✨'
+        ];
+        guidanceText = encouragements[Math.floor(Math.random() * encouragements.length)];
+      } else {
+        // Negative result - scenario-specific moral lesson
+        if (currentScenario && currentScenario.hints && currentScenario.hints[1]) {
+          guidanceText = currentScenario.hints[1]; // Tier 2: moral lesson specific to this scenario
+        } else {
+          guidanceText = '試下從別人角度諗下，下次可能會有更好既選擇';
+        }
+      }
+      
+      guidanceEl.textContent = guidanceText;
     }
 
     // 完成Feedback，進入下一個情景
