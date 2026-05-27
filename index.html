@@ -1275,8 +1275,13 @@
   <div class="admin-panel" id="admin-panel">
     <h2>📝 編輯情景庫 (JSON)</h2>
     <textarea id="json-editor"></textarea>
-    <div style="margin-top:10px">
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
     <button onclick="saveScenarios()" aria-label="儲存設定">💾 儲存</button>
+    <button onclick="exportQuestionsJson()" aria-label="匯出題目">📥 匯出 questions.json</button>
+    <label style="display:inline-flex; align-items:center; gap:4px; cursor:pointer; background:var(--bg-dark); border:2px solid var(--bg-light); color:var(--cream); padding:8px 12px; border-radius:8px; font-size:14px;">
+      📤 匯入 questions.json
+      <input type="file" accept=".json" style="display:none;" onchange="importQuestionsJson(this.files[0])">
+    </label>
     <button onclick="toggleAdmin()" aria-label="取消編輯">❌ 取消</button>
     <button onclick="resetGame()" aria-label="返回首頁">🏠 回首頁</button>
     </div>
@@ -3977,12 +3982,28 @@
 };
     }
     
-    // 讀取情景數據
-    function loadScenarios() {
-      // 直接使用內置數據，唔再 fetch
+    // 讀取情景數據 - 支援外部 questions.json
+    async function loadScenarios() {
+      try {
+        // 先嘗試讀取同目錄的 questions.json
+        const response = await fetch('questions.json');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && Array.isArray(data) && data.length > 0) {
+            gameData = { scenarios: data, endings: getDefaultScenarios().endings };
+            totalScenarios = gameData.scenarios.length;
+            gameStats.totalScenarios = totalScenarios;
+            buildCharacterCache();
+            return;
+          }
+        }
+      } catch (e) {
+        console.log('questions.json not found, using built-in scenarios');
+      }
+      // Fallback to built-in data
       gameData = getDefaultScenarios();
-      totalScenarios = gameData.scenarios.length; // 動態計算總關卡數
-      gameStats.totalScenarios = totalScenarios; // 同步到 gameStats
+      totalScenarios = gameData.scenarios.length;
+      gameStats.totalScenarios = totalScenarios;
       buildCharacterCache();
     }
     
@@ -4358,7 +4379,7 @@
     window.showLeaderboard = showLeaderboard;
 
     // 開始遊戲
-    function startGame(location) {
+    async function startGame(location) {
       location = location || 'random';
       
       // Capture player name at game start
@@ -4369,9 +4390,9 @@
         const startScreen = document.getElementById('start-screen');
         if (startScreen) startScreen.remove();
         
-        // 确保 gameData 已加载
+        // Ensure gameData is loaded (async-safe)
         if (!gameData.scenarios || gameData.scenarios.length === 0) {
-          loadScenarios();
+          await loadScenarios();
         }
         
         // 根據 location 篩選場景
@@ -5377,6 +5398,41 @@
       } catch (e) {
         alert('❌ JSON 錯誤: ' + e.message);
       }
+    }
+
+    // Export questions.json download
+    function exportQuestionsJson() {
+      const scenarios = gameData.scenarios || [];
+      const blob = new Blob([JSON.stringify(scenarios, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'questions.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Import questions.json from file
+    function importQuestionsJson(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!Array.isArray(data) || data.length === 0) {
+            alert('❌ 請選擇有效的 questions.json 檔案');
+            return;
+          }
+          gameData = { scenarios: data, endings: getDefaultScenarios().endings };
+          totalScenarios = gameData.scenarios.length;
+          gameStats.totalScenarios = totalScenarios;
+          buildCharacterCache();
+          document.getElementById('json-editor').value = JSON.stringify(gameData, null, 2);
+          alert('✅ 已匯入 ' + data.length + ' 個情景！');
+        } catch (err) {
+          alert('❌ 檔案格式錯誤: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
     }
 
     // 啟動
