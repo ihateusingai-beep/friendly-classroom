@@ -1265,6 +1265,20 @@
       </div>
     </div>
 
+    <div class="settings-section">
+      <span class="settings-label">⚠️ 道德提示</span>
+      <div class="settings-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="showMoralHintsToggle" onclick="toggleShowMoralHints(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+        <span id="showMoralHintsStatus" style="color:var(--cream);font-size:14px;">隱藏</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);margin-top:8px;line-height:1.5;">
+        顯示/隱藏選項旁邊既道德徽章<br>（⚠️+/⚠️-提示）
+      </div>
+    </div>
+
     <div class="settings-section" id="weekly-progress-section">
       <span class="settings-label">📅 每週進度</span>
       <div id="weekly-progress-display" style="margin-top:10px;"></div>
@@ -1321,11 +1335,228 @@
       soundEnabled: true,
       playerName: '',
       autoVoiceRead: true,  // 語音強化模式：自動朗讀所有文字
-      simpleMode: false     // 兩選項簡化模式
+      simpleMode: false,    // 兩選項簡化模式
+      showMoralHints: false // 道德徽章提示（⚠️+/⚠️-），預設隱藏
     };
 
-    // Get player name (from input or saved)
+    // Students system
+    const STUDENTS_KEY = 'fc-students';
+    const CURRENT_STUDENT_KEY = 'fc-current-student';
+
+    let currentStudent = null; // { id, name, avatar, color }
+    let students = []; // [{ id, name, avatar, color, createdAt }]
+
+    function loadStudents() {
+      const saved = localStorage.getItem(STUDENTS_KEY);
+      students = saved ? JSON.parse(saved) : [];
+      const current = localStorage.getItem(CURRENT_STUDENT_KEY);
+      currentStudent = current ? JSON.parse(current) : null;
+    }
+
+    function saveStudents() {
+      localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+      if (currentStudent) {
+        localStorage.setItem(CURRENT_STUDENT_KEY, JSON.stringify(currentStudent));
+      }
+    }
+
+    function getStudentStorageKey(studentId) {
+      return `fc-student-${studentId}`;
+    }
+
+    function loadStudentData(studentId) {
+      const key = getStudentStorageKey(studentId);
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const data = JSON.parse(saved);
+        relationships = data.relationships || {};
+        moral = data.moral !== undefined ? data.moral : 50;
+        gameStats = { ...gameStats, ...data.gameStats };
+      } else {
+        // fresh start for this student - reset relationships from scenarios
+        relationships = {};
+        if (gameData.scenarios && gameData.scenarios.length > 0) {
+          gameData.scenarios.forEach(s => {
+            if (s.characters) {
+              s.characters.forEach(c => {
+                if (relationships[c.name] === undefined) {
+                  relationships[c.name] = c.initial_relationship || 50;
+                }
+              });
+            }
+          });
+        }
+        saveStudentData(studentId);
+      }
+    }
+
+    function saveStudentData(studentId) {
+      const key = getStudentStorageKey(studentId);
+      localStorage.setItem(key, JSON.stringify({
+        relationships,
+        moral,
+        gameStats
+      }));
+    }
+
+    function switchStudent(student) {
+      if (!student) return;
+      // Save current student data first
+      if (currentStudent) {
+        saveStudentData(currentStudent.id);
+      }
+      currentStudent = student;
+      saveStudents();
+      loadStudentData(student.id);
+      saveRelationships();
+      showRelationships();
+      showStudentBar();
+      resetGame(); // go to start screen
+    }
+
+    function logoutStudent() {
+      if (currentStudent) {
+        saveStudentData(currentStudent.id);
+      }
+      currentStudent = null;
+      localStorage.removeItem(CURRENT_STUDENT_KEY);
+      showStudentBar();
+      showLoginScreen();
+    }
+
+    function showLoginScreen() {
+      loadStudents();
+      const gameArea = document.getElementById('game-area');
+      const studentCards = students.map(s => `
+        <div class="student-card" onclick="loginStudent('${s.id}')" style="cursor:pointer;text-align:center;padding:15px;background:var(--bg-dark);border:3px solid ${s.color || 'var(--cream)'};border-radius:12px;margin:8px 0;">
+          <div style="font-size:40px;">${s.avatar || '👤'}</div>
+          <div style="font-size:14px;color:var(--cream);font-weight:bold;margin-top:8px;">${s.name}</div>
+        </div>
+      `).join('');
+
+      const adminBtn = currentStudent ? `<button onclick="showStudentAdmin()" style="background:var(--bg-light);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:20px;">👥 管理學生</button>` : '';
+
+      gameArea.innerHTML = `
+        <div class="scenario-card" style="text-align:center;">
+          <h2 style="color:var(--yellow);font-family:'Press Start 2P';font-size:16px;margin-bottom:20px;">🎒 選擇學生</h2>
+          ${studentCards || '<p style="color:var(--cream);">暫時冇學生，請聯絡老師添加</p>'}
+          ${adminBtn}
+          <button onclick="showAddStudentForm()" style="background:var(--orange);border:2px solid var(--yellow);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:15px;">➕ 添加學生</button>
+        </div>
+      `;
+    }
+
+    function loginStudent(studentId) {
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        switchStudent(student);
+        startGame('random');
+      }
+    }
+
+    function showAddStudentForm() {
+      const gameArea = document.getElementById('game-area');
+      gameArea.innerHTML = `
+        <div class="scenario-card" style="text-align:center;">
+          <h2 style="color:var(--yellow);font-family:'Press Start 2P';font-size:14px;margin-bottom:20px;">➕ 添加學生</h2>
+          <input type="text" id="new-student-name" placeholder="學生名字" style="padding:12px 20px;font-size:16px;background:var(--bg-dark);color:var(--cream);border:2px solid var(--cream);border-radius:8px;width:200px;margin:10px;">
+          <input type="text" id="new-student-avatar" placeholder="頭像 emoji 🐶" maxlength="2" style="padding:12px 20px;font-size:24px;background:var(--bg-dark);color:var(--cream);border:2px solid var(--cream);border-radius:8px;width:80px;margin:10px;text-align:center;">
+          <div style="margin:15px 0;">
+            <p style="color:var(--cream);font-size:12px;margin-bottom:8px;">選擇顏色：</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+              ${['#e83838','#e87830','#ffd93f','#4caf50','#64B5F6','#9c27b0'].map(c => `
+                <label style="cursor:pointer;">
+                  <input type="radio" name="student-color" value="${c}" style="display:none;">
+                  <div style="width:40px;height:40px;background:${c};border-radius:50%;border:3px solid transparent;" onclick="this.parentElement.querySelector('input').checked=true;this.style.borderColor='var(--yellow)';this.parentElement.parentElement.querySelectorAll('div').forEach(d=>{if(d!==this)d.style.borderColor='transparent';});"></div>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <button onclick="addStudent()" style="background:var(--green);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">✅ 確認添加</button>
+            <button onclick="showLoginScreen()" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">❌ 取消</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function addStudent() {
+      const name = document.getElementById('new-student-name').value.trim();
+      const avatar = document.getElementById('new-student-avatar').value.trim() || '👤';
+      const colorRadio = document.querySelector('input[name="student-color"]:checked');
+      const color = colorRadio ? colorRadio.value : '#4caf50';
+
+      if (!name) {
+        alert('請輸入學生名字');
+        return;
+      }
+
+      const newStudent = {
+        id: 's_' + Date.now(),
+        name,
+        avatar,
+        color,
+        createdAt: new Date().toISOString()
+      };
+
+      students.push(newStudent);
+      saveStudents();
+      showLoginScreen();
+    }
+
+    function showStudentAdmin() {
+      const gameArea = document.getElementById('game-area');
+      const studentRows = students.map(s => `
+        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-dark);padding:10px 15px;border-radius:8px;margin:8px 0;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:30px;">${s.avatar}</span>
+            <span style="color:var(--cream);font-size:16px;font-weight:bold;">${s.name}</span>
+          </div>
+          <button onclick="deleteStudent('${s.id}')" style="background:var(--red);border:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">🗑️ 刪除</button>
+        </div>
+      `).join('');
+
+      gameArea.innerHTML = `
+        <div class="scenario-card">
+          <h2 style="color:var(--yellow);font-family:'Press Start 2P';font-size:14px;text-align:center;margin-bottom:20px;">👥 學生管理</h2>
+          ${studentRows}
+          <div style="text-align:center;margin-top:20px;">
+            <button onclick="showLoginScreen()" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;cursor:pointer;">返回</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function deleteStudent(studentId) {
+      if (!confirm('確定刪除呢個學生？所有數據會被清除。')) return;
+      students = students.filter(s => s.id !== studentId);
+      localStorage.removeItem(getStudentStorageKey(studentId));
+      saveStudents();
+      if (currentStudent && currentStudent.id === studentId) {
+        logoutStudent();
+      } else {
+        showStudentAdmin();
+      }
+    }
+
+    function showStudentBar() {
+      let bar = document.getElementById('student-bar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'student-bar';
+        bar.style.cssText = 'position:fixed;top:10px;left:10px;z-index:9998;display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg-mid);border:2px solid var(--cream);border-radius:10px;font-size:12px;';
+        document.body.appendChild(bar);
+      }
+      if (currentStudent) {
+        bar.innerHTML = `<span style="font-size:20px;">${currentStudent.avatar}</span><span style="color:var(--cream);font-weight:bold;">${currentStudent.name}</span><button onclick="logoutStudent()" style="background:transparent;border:none;color:var(--cream);cursor:pointer;font-size:10px;padding:2px 6px;">❌</button>`;
+        bar.style.display = 'flex';
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
     function getPlayerName() {
+      if (currentStudent) return currentStudent.name;
       const input = document.getElementById('player-name');
       if (input && input.value.trim()) {
         settings.playerName = input.value.trim();
@@ -1555,11 +1786,17 @@
     // 初始化
     async function init() {
       loadSettings();
+      loadStudents();
       loadRelationships();
       loadGameStats(); // Load gamification stats
       await loadScenarios();
       applySettings();
-      // Don't auto-start - wait for user to click "開始" button
+      showStudentBar();
+      // Show login screen if no current student
+      if (!currentStudent && students.length > 0) {
+        showLoginScreen();
+      }
+      // Don't auto-start - wait for user to click "開始" button or login
       // startGame() is called by onclick in HTML
     }
     
@@ -4035,6 +4272,10 @@
     // 儲存關係值
     function saveRelationships() {
       localStorage.setItem('friendly-classroom-v2', JSON.stringify({ relationships, moral }));
+      // Auto-save to student storage if logged in
+      if (currentStudent) {
+        saveStudentData(currentStudent.id);
+      }
     }
 
     // Load/Save Game Stats
@@ -4383,6 +4624,12 @@
 
     // 開始遊戲
     async function startGame(location) {
+      // If student system is active and no student logged in, redirect to login
+      if (students.length > 0 && !currentStudent) {
+        showLoginScreen();
+        return;
+      }
+
       location = location || 'random';
       
       // Capture player name at game start
@@ -4443,6 +4690,14 @@
     window.toggleSound = toggleSound;
     window.toggleAutoVoice = toggleAutoVoice;
     window.toggleSimpleMode = toggleSimpleMode;
+    window.toggleShowMoralHints = toggleShowMoralHints;
+    window.showLoginScreen = showLoginScreen;
+    window.loginStudent = loginStudent;
+    window.showAddStudentForm = showAddStudentForm;
+    window.addStudent = addStudent;
+    window.showStudentAdmin = showStudentAdmin;
+    window.deleteStudent = deleteStudent;
+    window.logoutStudent = logoutStudent;
     window.saveScenarios = saveScenarios;
     window.showGuidanceTip = showGuidanceTip;
     window.finishFeedback = finishFeedback;
@@ -4602,7 +4857,8 @@
           <div class="options">
             ${(settings.simpleMode ? scenario.options.slice(0,2) : scenario.options).map((opt, i) => {
               const moralChange = opt.effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
-              const warnIcon = moralChange > 0 ? '⚠️+'+moralChange : moralChange < 0 ? '⚠️'+moralChange : '';
+              const showWarn = settings.showMoralHints && moralChange !== 0;
+              const warnIcon = showWarn ? (moralChange > 0 ? '⚠️+'+moralChange : '⚠️'+moralChange) : '';
               const warnClass = moralChange > 0 ? 'warn-positive' : moralChange < 0 ? 'warn-negative' : 'warn-neutral';
               const letters = settings.simpleMode ? ['A', 'B'] : ['A', 'B', 'C'];
               return `
@@ -4762,6 +5018,15 @@
       saveSettings();
       // Re-render current scenario so options update immediately
       // currentScenario is already the scenario object (set in showScenario), not an ID
+      if (currentScenario) {
+        showScenario(currentScenario);
+      }
+    }
+
+    function toggleShowMoralHints(enabled) {
+      settings.showMoralHints = enabled;
+      document.getElementById('showMoralHintsStatus').innerText = enabled ? '顯示' : '隱藏';
+      saveSettings();
       if (currentScenario) {
         showScenario(currentScenario);
       }
@@ -4959,12 +5224,18 @@
       lastTotalChange = totalChange;
       lastMoralChange = moralChange;
       
+      const isNegative = lastTotalChange < 0 || lastMoralChange < 0;
+      const retryHint = isNegative
+        ? '<div style="margin-top:15px;padding:10px;background:rgba(232,56,56,0.2);border:2px solid var(--red);border-radius:8px;color:var(--cream);font-size:14px;text-align:center;">💡 可以點樣做得更好？<br>按「🔄 我想再想想」重新選擇</div>'
+        : '';
+
       gameArea.innerHTML = `
         <div class="result-overlay show">
           <div class="result-card feedback-modal">
             <div class="feedback-stage stage-consequence">
               <div class="feedback-title ${colorClass}">${epicTitle}</div>
               <div class="result-comment">${comments}</div>
+              ${retryHint}
               <button class="continue-btn" onclick="showGuidanceTip(this)" aria-label="查看如何改進">睇下點樣做得更好 💡</button>
             </div>
             
@@ -5467,8 +5738,21 @@
           totalScenarios = gameData.scenarios.length;
           gameStats.totalScenarios = totalScenarios;
           buildCharacterCache();
+          // Refresh UI - reset relationships from new scenarios
+          relationships = {};
+          gameData.scenarios.forEach(s => {
+            if (s.characters) {
+              s.characters.forEach(c => {
+                if (relationships[c.name] === undefined) {
+                  relationships[c.name] = c.initial_relationship || 50;
+                }
+              });
+            }
+          });
+          saveRelationships();
+          showRelationships();
           document.getElementById('json-editor').value = JSON.stringify(gameData, null, 2);
-          alert('✅ 已匯入 ' + data.length + ' 個情景！');
+          alert('✅ 已匯入 ' + data.length + ' 個情景！重新開始睇到更新後既角色');
         } catch (err) {
           alert('❌ 檔案格式錯誤: ' + err.message);
         }
