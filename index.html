@@ -1536,8 +1536,8 @@
 
       // 新增成就徽章
       { id: 'streak_3_ach', name: '三連關', emoji: '🔱', desc: '連續答對 3 關', condition: (stats) => (stats.streakCorrect || 0) >= 3 },
-      { id: 'completed_10', name: '十關達人', emoji: '🎯', desc: '完成 10 關', condition: (stats) => (stats.scenariosCompleted || 0) >= 10 },
-      { id: 'completed_all', name: '全情景通', emoji: '📜', desc: '完成所有情景', condition: (stats) => (stats.scenariosCompleted || 0) >= (stats.totalScenarios || 15) },
+      { id: 'completed_10', name: '十關達人', emoji: '🎯', desc: '完成 10 關', condition: (stats) => completedScenarios.length >= 10 },
+      { id: 'completed_all', name: '全情景通', emoji: '📜', desc: '完成所有情景', condition: (stats) => completedScenarios.length >= totalScenarios && totalScenarios > 0 },
       { id: 'moral达标', name: '道德達標', emoji: '⚖️', desc: '道德積分達標 (≥80)', condition: (stats) => (stats.moralBest || 0) >= 80 }
     ];
     
@@ -1548,7 +1548,9 @@
     let previousRelationships = null;
     let previousMoral = 50;
     let currentOnContinue = null;
-    let lastTotalChange = 0; // Store last result for dynamic guidance
+    // Track moralChange alongside totalChange for better guidance
+    let lastTotalChange = 0;
+    let lastMoralChange = 0;
     
     // 初始化
     async function init() {
@@ -4521,11 +4523,16 @@
         return;
       }
       
-      // Skip if already completed
+      // Skip if already completed - find next from ANY option, not just options[0]
       if (completedScenarios.includes(scenario.id)) {
-        const nextId = scenario.options[0]?.next_scenario;
-        const next = gameData.scenarios.find(s => s.id === nextId);
+        // Find first option that has a valid next_scenario
+        const nextOption = scenario.options?.find(o => o.next_scenario);
+        const nextId = nextOption?.next_scenario;
+        const next = nextId ? gameData.scenarios.find(s => s.id === nextId) : null;
         if (next) { showScenario(next); return; }
+        // If no next configured, check ending
+        checkEnding();
+        return;
       }
       
       currentScenario = scenario;
@@ -4556,9 +4563,9 @@
         <div class="scenario-card">
           <!-- Progress Bar -->
           <div class="progress-container">
-            <div class="progress-label">關卡進度：${currentScenarioNum}/${totalScenarios} ${settings.simpleMode ? '📗' : ''}</div>
+            <div class="progress-label">關卡進度：${currentScenarioNum}/${totalScenarios || completedScenarios.length} ${settings.simpleMode ? '📗' : ''}</div>
             <div class="progress-bar">
-              <div class="progress-fill" style="width:${(currentScenarioNum/totalScenarios)*100}%"></div>
+              <div class="progress-fill" style="width:${totalScenarios > 0 ? (currentScenarioNum/Math.max(totalScenarios,1))*100 : (completedScenarios.length > 0 ? 100 : 0)}%"></div>
             </div>
           </div>
           
@@ -4927,6 +4934,7 @@
 
       //.Play success/fail sound based on effect
       const totalChange = effects.reduce((sum, e) => sum + e.change, 0);
+      const moralChange = effects.reduce((sum, e) => sum + (e.moralChange || 0), 0);
       if (totalChange > 0) { AudioSys.success(); playBgm('achievement'); }
       else if (totalChange < 0) { AudioSys.fail(); playBgm('calm'); }
       setTimeout(() => stopBgm(), 4000); // Stop BGM after 4 seconds
@@ -4947,8 +4955,9 @@
       const colorClass = isPositive ? 'title-positive' : 'title-negative';
       const epicTitle = epicPhrases[Math.floor(Math.random() * epicPhrases.length)];
 
-      // Store for showGuidanceTip to use
+      // Store for showGuidanceTip to use (both relationship and moral)
       lastTotalChange = totalChange;
+      lastMoralChange = moralChange;
       
       gameArea.innerHTML = `
         <div class="result-overlay show">
@@ -4984,7 +4993,7 @@
       const guidanceEl = card.querySelector('#dynamic-guidance');
       let guidanceText = '';
       
-      if (lastTotalChange >= 0) {
+      if (lastTotalChange >= 0 && lastMoralChange >= 0) {
         // Positive result - encouraging affirmation
         const encouragements = [
           '你做得好好！繼續保持呢份善良同關心～',
@@ -4993,6 +5002,14 @@
           '你具備真正既友誼力量！繼續發光 ✨'
         ];
         guidanceText = encouragements[Math.floor(Math.random() * encouragements.length)];
+      } else if (lastMoralChange < 0) {
+        // Relationships up but morals down - warn about principle
+        const moralWarns = [
+          '雖然關係冇跌，但為咗討好別人而失去原則就唔值得了。',
+          '做人要有底線，唔可以為咗人哋開心就放棄自己既價值觀。',
+          '友誼係建於互相尊重，唔係靠討好。你做得啱！💪'
+        ];
+        guidanceText = moralWarns[Math.floor(Math.random() * moralWarns.length)];
       } else {
         // Negative result - scenario-specific moral lesson
         if (currentScenario && currentScenario.hints && currentScenario.hints[1]) {
