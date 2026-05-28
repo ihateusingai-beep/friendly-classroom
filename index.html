@@ -1434,14 +1434,14 @@
         </div>
       `).join('');
 
-      const adminBtn = currentStudent ? `<button onclick="showStudentAdmin()" style="background:var(--bg-light);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:20px;">👥 管理學生</button>` : '';
+      const adminBtn = currentStudent ? `<button onclick="showStudentAdmin()" aria-label="管理學生" style="background:var(--bg-light);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:20px;">👥 管理學生</button>` : '';
 
       gameArea.innerHTML = `
         <div class="scenario-card" style="text-align:center;">
           <h2 style="color:var(--yellow);font-family:'Press Start 2P';font-size:16px;margin-bottom:20px;">🎒 選擇學生</h2>
           ${studentCards || '<p style="color:var(--cream);">暫時冇學生，請聯絡老師添加</p>'}
           ${adminBtn}
-          <button onclick="showAddStudentForm()" style="background:var(--orange);border:2px solid var(--yellow);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:15px;">➕ 添加學生</button>
+          <button onclick="showAddStudentForm()" aria-label="添加學生" style="background:var(--orange);border:2px solid var(--yellow);color:var(--cream);padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;margin-top:15px;">➕ 添加學生</button>
         </div>
       `;
     }
@@ -1473,8 +1473,8 @@
             </div>
           </div>
           <div style="margin-top:20px;">
-            <button onclick="addStudent()" style="background:var(--green);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">✅ 確認添加</button>
-            <button onclick="showLoginScreen()" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">❌ 取消</button>
+            <button onclick="addStudent()" aria-label="確認添加學生" style="background:var(--green);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">✅ 確認添加</button>
+            <button onclick="showLoginScreen()" aria-label="取消" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:12px 25px;border-radius:8px;font-size:16px;cursor:pointer;margin:5px;">❌ 取消</button>
           </div>
         </div>
       `;
@@ -1512,7 +1512,7 @@
             <span style="font-size:30px;">${s.avatar}</span>
             <span style="color:var(--cream);font-size:16px;font-weight:bold;">${s.name}</span>
           </div>
-          <button onclick="deleteStudent('${s.id}')" style="background:var(--red);border:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">🗑️ 刪除</button>
+          <button onclick="deleteStudent('${s.id}')" aria-label="刪除學生" style="background:var(--red);border:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;">🗑️ 刪除</button>
         </div>
       `).join('');
 
@@ -1521,7 +1521,7 @@
           <h2 style="color:var(--yellow);font-family:'Press Start 2P';font-size:14px;text-align:center;margin-bottom:20px;">👥 學生管理</h2>
           ${studentRows}
           <div style="text-align:center;margin-top:20px;">
-            <button onclick="showLoginScreen()" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;cursor:pointer;">返回</button>
+            <button onclick="showLoginScreen()" aria-label="返回學生列表" style="background:var(--bg-dark);border:2px solid var(--cream);color:var(--cream);padding:10px 20px;border-radius:8px;cursor:pointer;">返回</button>
           </div>
         </div>
       `;
@@ -1548,7 +1548,7 @@
         document.body.appendChild(bar);
       }
       if (currentStudent) {
-        bar.innerHTML = `<span style="font-size:20px;">${currentStudent.avatar}</span><span style="color:var(--cream);font-weight:bold;">${currentStudent.name}</span><button onclick="logoutStudent()" style="background:transparent;border:none;color:var(--cream);cursor:pointer;font-size:10px;padding:2px 6px;">❌</button>`;
+        bar.innerHTML = `<span style="font-size:20px;">${currentStudent.avatar}</span><span style="color:var(--cream);font-weight:bold;">${currentStudent.name}</span><button onclick="logoutStudent()" aria-label="登出" style="background:transparent;border:none;color:var(--cream);cursor:pointer;font-size:10px;padding:2px 6px;">❌</button>`;
         bar.style.display = 'flex';
       } else {
         bar.style.display = 'none';
@@ -5282,9 +5282,11 @@
         ];
         guidanceText = moralWarns[Math.floor(Math.random() * moralWarns.length)];
       } else {
-        // Negative result - scenario-specific moral lesson
-        if (currentScenario && currentScenario.hints && currentScenario.hints[1]) {
-          guidanceText = currentScenario.hints[1]; // Tier 2: moral lesson specific to this scenario
+        // Negative result - scenario-specific moral lesson from hints[2] (action recommendation)
+        if (currentScenario && currentScenario.hints && currentScenario.hints[2]) {
+          guidanceText = currentScenario.hints[2]; // Tier 3: action recommendation specific to this scenario
+        } else if (currentScenario && currentScenario.hints && currentScenario.hints[1]) {
+          guidanceText = currentScenario.hints[1];
         } else {
           guidanceText = '試下從別人角度諗下，下次可能會有更好既選擇';
         }
